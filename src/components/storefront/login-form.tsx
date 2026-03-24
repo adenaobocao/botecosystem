@@ -1,15 +1,81 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
 
 function LoginFormInner() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleCredentials(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    setLoading(false);
+
+    if (result?.error) {
+      setError("Login ou senha incorretos");
+    } else {
+      router.push(callbackUrl);
+      router.refresh();
+    }
+  }
 
   return (
     <div className="space-y-4">
+      {/* Login com usuario/senha */}
+      <form onSubmit={handleCredentials} className="space-y-3">
+        <input
+          name="email"
+          type="text"
+          placeholder="Login"
+          required
+          className="flex h-12 w-full rounded-xl border border-border bg-card px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Senha"
+          required
+          className="flex h-12 w-full rounded-xl border border-border bg-card px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+        />
+        {error && (
+          <p className="text-sm text-red-600 font-medium">{error}</p>
+        )}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full h-12 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {loading ? "Entrando..." : "Entrar"}
+        </button>
+      </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs">
+          <span className="bg-background px-3 text-muted-foreground">ou</span>
+        </div>
+      </div>
+
+      {/* Google */}
       <button
         onClick={() => signIn("google", { callbackUrl })}
         className="flex items-center justify-center gap-3 w-full h-12 bg-card border border-border rounded-xl text-sm font-medium hover:bg-secondary transition-colors"
@@ -34,41 +100,6 @@ function LoginFormInner() {
         </svg>
         Continuar com Google
       </button>
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs">
-          <span className="bg-background px-3 text-muted-foreground">ou</span>
-        </div>
-      </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          const email = formData.get("email") as string;
-          if (email) {
-            signIn("email", { email, callbackUrl });
-          }
-        }}
-        className="space-y-3"
-      >
-        <input
-          name="email"
-          type="email"
-          placeholder="seu@email.com"
-          required
-          className="flex h-12 w-full rounded-xl border border-border bg-card px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
-        />
-        <button
-          type="submit"
-          className="w-full h-12 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
-        >
-          Enviar link magico
-        </button>
-      </form>
     </div>
   );
 }

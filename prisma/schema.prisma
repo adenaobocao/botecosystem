@@ -119,6 +119,7 @@ model User {
   name          String?
   email         String    @unique
   emailVerified DateTime?
+  passwordHash  String?
   phone         String?
   image         String?
   role          UserRole  @default(CUSTOMER)
