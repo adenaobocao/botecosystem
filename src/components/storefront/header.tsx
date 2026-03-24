@@ -13,8 +13,8 @@ export function StorefrontHeader() {
           <Image
             src="/logo.png"
             alt="Boteco da Estacao"
-            width={32}
-            height={32}
+            width={38}
+            height={38}
             className="rounded-full"
           />
           <span className="font-bold text-base tracking-tight hidden sm:inline">

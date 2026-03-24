@@ -73,6 +73,25 @@ export async function getProduct(slug: string) {
   });
 }
 
+export async function getQuickSuggestions(excludeIds: string[] = []) {
+  return db.product.findMany({
+    where: {
+      isAvailable: true,
+      deletedAt: null,
+      id: { notIn: excludeIds },
+    },
+    take: 4,
+    orderBy: [{ isFeatured: "desc" }, { name: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      image: true,
+      basePrice: true,
+    },
+  });
+}
+
 export async function getFeaturedProducts() {
   return db.product.findMany({
     where: {

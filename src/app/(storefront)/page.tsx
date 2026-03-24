@@ -34,19 +34,28 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Status pill */}
-        <div className="absolute top-4 left-4">
+        {/* Top pills */}
+        <div className="absolute top-4 inset-x-4 flex items-center justify-between">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             <span className="text-[11px] text-white/80 font-medium">Aberto agora</span>
           </div>
+          <a
+            href="#agenda"
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/80 backdrop-blur-md rounded-full border border-purple-300/20 hover:bg-purple-500/90 transition-colors"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="18" r="4" /><path d="M16 18V2" />
+            </svg>
+            <span className="text-[11px] text-white font-medium">Agenda</span>
+          </a>
         </div>
 
         {/* Content — posicionado mais acima pra dar respiro pro banner */}
         <div className="absolute bottom-16 inset-x-0 px-5 sm:px-8">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center gap-2 mb-2">
-              <Image src="/logo.png" alt="" width={28} height={28} className="rounded-full" />
+            <div className="flex items-center gap-2.5 mb-2">
+              <Image src="/logo.png" alt="" width={44} height={44} className="rounded-full border-2 border-white/20" />
               <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Desde 2016</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -155,6 +164,7 @@ export default async function HomePage() {
             }) => (
               <ProductCard
                 key={product.id}
+                id={product.id}
                 name={product.name}
                 slug={product.slug}
                 description={product.description}

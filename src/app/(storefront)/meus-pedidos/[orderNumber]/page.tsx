@@ -5,6 +5,7 @@ import { getOrderDetail } from "@/lib/queries/my-orders";
 import { serialize } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
+import { RepeatOrderButton } from "@/components/storefront/repeat-order-button";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +68,7 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
   const isCancelled = order.status === "CANCELLED";
   const isPending = order.status === "PENDING";
   const isDelivery = order.type === "DELIVERY";
+  const isDelivered = order.status === "DELIVERED";
 
   // WhatsApp message for delivery notification
   const whatsappMsg = encodeURIComponent(
@@ -117,8 +119,12 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
                   <div className="flex flex-col items-center">
                     <StepIcon type={step.icon} done={done} active={active} />
                     {!isLast && (
-                      <div className={`w-0.5 h-8 my-1 transition-colors ${
-                        done ? "bg-green-500" : "bg-muted"
+                      <div className={`w-0.5 h-8 my-1 rounded-full transition-colors ${
+                        done
+                          ? "bg-green-500"
+                          : active
+                          ? "animate-status-flow w-1 rounded-full"
+                          : "bg-muted"
                       }`} />
                     )}
                   </div>
@@ -131,7 +137,7 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
                       {step.label}
                     </p>
                     {active && (
-                      <p className="text-xs text-primary font-medium mt-0.5">Agora</p>
+                      <p className="text-xs text-primary font-medium mt-0.5 animate-progress-pulse">Agora</p>
                     )}
                   </div>
                 </div>
@@ -228,12 +234,20 @@ export default async function OrderStatusPage({ params }: { params: Promise<{ or
         </div>
       )}
 
-      <Link
-        href="/cardapio"
-        className="flex items-center justify-center w-full h-12 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
-      >
-        Fazer novo pedido
-      </Link>
+      {/* Action buttons */}
+      <div className="space-y-2">
+        {/* Repeat order — for delivered/cancelled orders */}
+        {(isDelivered || isCancelled) && order.items.length > 0 && (
+          <RepeatOrderButton items={order.items} />
+        )}
+
+        <Link
+          href="/cardapio"
+          className="flex items-center justify-center w-full h-12 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+        >
+          Fazer novo pedido
+        </Link>
+      </div>
     </div>
   );
 }

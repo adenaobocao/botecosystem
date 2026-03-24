@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 
 export interface CartItem {
   productId: string;
@@ -21,11 +21,16 @@ interface CartContextType {
   clearCart: () => void;
   itemCount: number;
   subtotal: number;
+  toast: string | null;
+  lastAddedAt: number;
+  soundEnabled: boolean;
+  toggleSound: () => void;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
 
 const STORAGE_KEY = "boteco-cart";
+const SOUND_KEY = "boteco-sound";
 
 function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -45,13 +50,40 @@ function saveCart(items: CartItem[]) {
   }
 }
 
+function playCartSound() {
+  try {
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.2);
+    setTimeout(() => ctx.close(), 300);
+  } catch {
+    // Web Audio not available, ignore
+  }
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const [lastAddedAt, setLastAddedAt] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Load from localStorage on mount
   useEffect(() => {
     setItems(loadCart());
+    const sound = localStorage.getItem(SOUND_KEY);
+    if (sound !== null) setSoundEnabled(sound === "true");
     setLoaded(true);
   }, []);
 
@@ -76,6 +108,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
         return [...prev, { ...newItem, quantity: newItem.quantity || 1 }];
       });
+
+      // Toast notification
+      setToast(newItem.name);
+      setLastAddedAt(Date.now());
+
+      // Sound
+      if (typeof window !== "undefined") {
+        const sound = localStorage.getItem(SOUND_KEY);
+        if (sound !== "false") playCartSound();
+      }
+
+      // Auto-clear toast
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setToast(null), 2500);
     },
     []
   );
@@ -111,12 +157,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => setItems([]), []);
 
+  const toggleSound = useCallback(() => {
+    setSoundEnabled((prev) => {
+      const next = !prev;
+      localStorage.setItem(SOUND_KEY, String(next));
+      return next;
+    });
+  }, []);
+
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, itemCount, subtotal }}
+      value={{
+        items, addItem, removeItem, updateQuantity, clearCart,
+        itemCount, subtotal, toast, lastAddedAt, soundEnabled, toggleSound,
+      }}
     >
       {children}
     </CartContext.Provider>

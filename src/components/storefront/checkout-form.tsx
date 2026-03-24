@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { createOrder } from "@/lib/actions/checkout";
 import Link from "next/link";
+import Image from "next/image";
 
 function formatPrice(price: number): string {
   return price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -13,22 +14,56 @@ function formatPrice(price: number): string {
 type OrderType = "DELIVERY" | "PICKUP" | "TABLE";
 
 const orderTypes = [
-  { value: "DELIVERY" as OrderType, label: "Entrega", desc: "Receba em casa" },
-  { value: "PICKUP" as OrderType, label: "Retirada", desc: "Busque no balcao" },
-  { value: "TABLE" as OrderType, label: "Mesa", desc: "Consumo no local" },
+  { value: "DELIVERY" as OrderType, label: "Entrega", desc: "Receba em casa", icon: "🛵" },
+  { value: "PICKUP" as OrderType, label: "Retirada", desc: "Busque no balcao", icon: "🏪" },
+  { value: "TABLE" as OrderType, label: "Mesa", desc: "Consumo no local", icon: "🪑" },
 ];
 
-export function CheckoutForm() {
-  const { items, subtotal, clearCart } = useCart();
+interface Suggestion {
+  id: string;
+  name: string;
+  slug: string;
+  image: string | null;
+  basePrice: number | string;
+}
+
+interface CheckoutFormProps {
+  suggestions?: Suggestion[];
+}
+
+export function CheckoutForm({ suggestions = [] }: CheckoutFormProps) {
+  const { items, subtotal, clearCart, addItem } = useCart();
   const router = useRouter();
   const [type, setType] = useState<OrderType>("DELIVERY");
   const [tableNumber, setTableNumber] = useState("");
   const [notes, setNotes] = useState("");
+  const [coupon, setCoupon] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const deliveryFee = type === "DELIVERY" ? 8.0 : 0;
-  const total = subtotal + deliveryFee;
+  const discount = couponApplied ? subtotal * 0.1 : 0;
+  const total = subtotal + deliveryFee - discount;
+
+  // Filter suggestions to exclude items already in cart
+  const cartProductIds = new Set(items.map((i) => i.productId));
+  const filteredSuggestions = suggestions.filter((s) => !cartProductIds.has(s.id));
+
+  function handleCoupon() {
+    if (coupon.toUpperCase().trim() === "BOTECO10") {
+      setCouponApplied(true);
+    }
+  }
+
+  function handleAddSuggestion(s: Suggestion) {
+    addItem({
+      productId: s.id,
+      name: s.name,
+      price: Number(s.basePrice),
+      image: s.image,
+    });
+  }
 
   if (items.length === 0) {
     return (
@@ -89,6 +124,7 @@ export function CheckoutForm() {
                   : "border-border hover:border-primary/30"
               }`}
             >
+              <span className="text-xl block mb-1">{opt.icon}</span>
               <span className={`text-sm font-semibold block ${type === opt.value ? "text-primary" : ""}`}>
                 {opt.label}
               </span>
@@ -126,6 +162,39 @@ export function CheckoutForm() {
         />
       </div>
 
+      {/* Complement suggestions */}
+      {filteredSuggestions.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-semibold mb-3">Combina com seu pedido</h2>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+            {filteredSuggestions.slice(0, 4).map((s) => (
+              <button
+                key={s.id}
+                onClick={() => handleAddSuggestion(s)}
+                className="shrink-0 w-[140px] p-2 bg-card border border-border rounded-xl hover:border-primary/30 transition-all text-left group"
+              >
+                <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-muted mb-2">
+                  {s.image ? (
+                    <Image src={s.image} alt={s.name} fill className="object-cover" sizes="140px" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-2xl text-muted-foreground">🍽️</div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                    <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs font-semibold truncate">{s.name}</p>
+                <p className="text-xs text-primary font-bold">{formatPrice(Number(s.basePrice))}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Items summary */}
       <div className="mb-6">
         <h2 className="text-sm font-semibold mb-3">Resumo</h2>
@@ -150,6 +219,12 @@ export function CheckoutForm() {
                 <span>{formatPrice(deliveryFee)}</span>
               </div>
             )}
+            {couponApplied && (
+              <div className="flex justify-between text-sm">
+                <span className="text-green-600 font-medium">Cupom BOTECO10</span>
+                <span className="text-green-600 font-medium">-{formatPrice(discount)}</span>
+              </div>
+            )}
           </div>
           <div className="border-t border-border pt-2 flex justify-between">
             <span className="font-bold">Total</span>
@@ -157,6 +232,52 @@ export function CheckoutForm() {
           </div>
         </div>
       </div>
+
+      {/* Coupon */}
+      {!couponApplied && (
+        <div className="mb-6">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+              placeholder="Tem cupom? Digite aqui"
+              maxLength={20}
+              className="flex-1 h-11 rounded-xl border border-border bg-card px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+            />
+            <button
+              onClick={handleCoupon}
+              disabled={!coupon.trim()}
+              className="h-11 px-5 bg-secondary text-secondary-foreground font-semibold text-sm rounded-xl hover:bg-secondary/80 transition-colors disabled:opacity-50"
+            >
+              Aplicar
+            </button>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1.5 ml-1">
+            Primeira compra? Experimente BOTECO10
+          </p>
+        </div>
+      )}
+      {couponApplied && (
+        <div className="mb-6 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200/60 dark:border-green-800/30 rounded-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span className="text-green-800 dark:text-green-300 font-medium">
+                Cupom BOTECO10 aplicado — 10% off
+              </span>
+            </div>
+            <button
+              onClick={() => { setCouponApplied(false); setCoupon(""); }}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Remover
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Payment info */}
       <div className="mb-6 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200/60 dark:border-green-800/30 rounded-xl">
