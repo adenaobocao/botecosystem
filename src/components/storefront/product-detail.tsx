@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
+import { useCart } from "@/lib/cart-context";
 
 interface Variant {
   id: string;
@@ -40,6 +41,9 @@ export function ProductDetail({ product }: { product: Product }) {
   );
   const [notes, setNotes] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+  const { addItem } = useCart();
+  const router = useRouter();
 
   const basePrice = Number(product.basePrice);
   const variantExtra = product.variants
@@ -58,6 +62,29 @@ export function ProductDetail({ product }: { product: Product }) {
       }
       return next;
     });
+  }
+
+  function handleAdd() {
+    const selectedVariantsList = product.variants.filter((v) =>
+      selectedVariants.has(v.id)
+    );
+    const variantName = selectedVariantsList.map((v) => v.name).join(", ");
+
+    addItem({
+      productId: product.id,
+      variantId: selectedVariantsList.length > 0
+        ? selectedVariantsList.map((v) => v.id).join("+")
+        : undefined,
+      name: product.name,
+      variantName: variantName || undefined,
+      price: unitPrice,
+      quantity,
+      image: product.image,
+      notes: notes || undefined,
+    });
+
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
   }
 
   return (
@@ -167,7 +194,7 @@ export function ProductDetail({ product }: { product: Product }) {
         </div>
 
         {/* Quantity and CTA */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 pb-20 md:pb-0">
           <div className="flex items-center border border-border rounded-xl overflow-hidden">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -186,8 +213,15 @@ export function ProductDetail({ product }: { product: Product }) {
             </button>
           </div>
 
-          <button className="flex-1 h-12 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity">
-            Adicionar {formatPrice(totalPrice)}
+          <button
+            onClick={handleAdd}
+            className={`flex-1 h-12 rounded-xl font-semibold text-sm transition-all ${
+              added
+                ? "bg-green-600 text-white"
+                : "bg-primary text-primary-foreground hover:opacity-90"
+            }`}
+          >
+            {added ? "Adicionado!" : `Adicionar ${formatPrice(totalPrice)}`}
           </button>
         </div>
       </div>

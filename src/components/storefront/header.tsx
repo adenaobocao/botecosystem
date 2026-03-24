@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { UserMenu } from "./user-menu";
+import { CartBadge } from "./cart-badge";
 
 export function StorefrontHeader() {
   return (
@@ -36,7 +37,10 @@ export function StorefrontHeader() {
           </Link>
         </nav>
 
-        <UserMenu />
+        <div className="flex items-center gap-2">
+          <CartBadge />
+          <UserMenu />
+        </div>
       </div>
     </header>
   );
