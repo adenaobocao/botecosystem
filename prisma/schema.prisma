@@ -60,6 +60,13 @@ enum LoyaltyType {
   ADJUSTED
 }
 
+enum OrderOrigin {
+  SITE
+  IFOOD
+  WHATSAPP
+  TABLE
+}
+
 // ============================================================
 // AUTH.JS (NextAuth v5) — PrismaAdapter tables
 // ============================================================
@@ -186,6 +193,7 @@ model Order {
   type          OrderType
   tableNumber   Int?
   status        OrderStatus @default(PENDING)
+  origin        OrderOrigin @default(SITE)
   subtotal      Decimal     @db.Decimal(10, 2)
   deliveryFee   Decimal     @default(0) @db.Decimal(10, 2)
   discount      Decimal     @default(0) @db.Decimal(10, 2)
