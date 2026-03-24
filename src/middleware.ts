@@ -33,9 +33,18 @@ export default auth((req) => {
     }
   }
 
+  // Meus pedidos — requer autenticacao
+  if (pathname.startsWith("/meus-pedidos")) {
+    if (!isLoggedIn) {
+      const loginUrl = new URL("/login", req.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/minha-conta/:path*", "/pedidos/:path*"],
+  matcher: ["/dashboard/:path*", "/minha-conta/:path*", "/pedidos/:path*", "/meus-pedidos/:path*"],
 };

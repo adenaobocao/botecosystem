@@ -37,6 +37,17 @@ const navItems = [
     ),
   },
   {
+    label: "Pedidos",
+    href: "/meus-pedidos",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 3h5v5" /><path d="M8 3H3v5" />
+        <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3" />
+        <path d="m15 9 6-6" />
+      </svg>
+    ),
+  },
+  {
     label: "Conta",
     href: "/minha-conta",
     icon: (
@@ -64,16 +75,18 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex flex-col items-center gap-0.5 px-3 py-2 text-[11px] font-medium transition-colors ${
+              className={`relative flex flex-col items-center gap-0.5 px-2 py-2 text-[10px] font-medium transition-colors ${
                 isActive
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {item.icon}
+              <span className={item.hasCartBadge && itemCount > 0 ? "animate-bounce-subtle" : ""}>
+                {item.icon}
+              </span>
               <span>{item.label}</span>
               {item.hasCartBadge && itemCount > 0 && (
-                <span className="absolute -top-0.5 right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0.5 right-0 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
                   {itemCount > 9 ? "9+" : itemCount}
                 </span>
               )}
