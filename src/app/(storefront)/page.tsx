@@ -42,8 +42,8 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="absolute bottom-0 inset-x-0 p-5 sm:p-8">
+        {/* Content — posicionado mais acima pra dar respiro pro banner */}
+        <div className="absolute bottom-16 inset-x-0 px-5 sm:px-8">
           <div className="max-w-5xl mx-auto">
             <div className="flex items-center gap-2 mb-2">
               <Image src="/logo.png" alt="" width={28} height={28} className="rounded-full" />
@@ -79,37 +79,32 @@ export default async function HomePage() {
       {/* PROMO BANNER — Visivel sem scroll no mobile.    */}
       {/* Apelo de venda imediato.                        */}
       {/* ─────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 -mt-6 relative z-10">
+      <section className="max-w-7xl mx-auto px-4 -mt-8 relative z-10 mb-2">
         <Link
           href="/cardapio/house-burguer"
-          className="block p-4 rounded-2xl bg-card border border-border shadow-lg hover:shadow-xl transition-shadow"
+          className="block p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30 shadow-lg hover:shadow-xl transition-shadow"
         >
           <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-muted shrink-0">
+            <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted shrink-0">
               <Image
                 src="/hero.jpg"
                 alt="House Burguer"
                 fill
                 className="object-cover"
-                sizes="64px"
+                sizes="80px"
               />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase">
-                  Destaque
-                </span>
-                <span className="flex items-center gap-0.5 text-[11px] text-amber-600 font-medium">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                  4.7
-                </span>
-              </div>
-              <h3 className="mt-1 text-sm font-bold leading-tight">House Burguer — o mais pedido</h3>
+              <span className="inline-block px-2 py-0.5 bg-amber-500/15 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-full uppercase tracking-wide">
+                Mais pedido da casa
+              </span>
+              <h3 className="mt-1.5 text-base font-bold leading-tight">House Burguer</h3>
               <p className="text-xs text-muted-foreground mt-0.5">Costela 160g, cheddar cremoso, maionese da casa</p>
             </div>
-            <span className="text-sm font-bold text-primary shrink-0">R$ 46,99</span>
+            <div className="shrink-0 text-right">
+              <span className="text-lg font-bold text-foreground">R$ 46,99</span>
+              <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">Ver detalhes</p>
+            </div>
           </div>
         </Link>
       </section>
