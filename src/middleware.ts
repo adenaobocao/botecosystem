@@ -1,18 +1,17 @@
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
-  const userRole = req.auth?.user?.role;
 
-  // Dashboard — requer ADMIN ou MANAGER
+  // Dashboard — requer auth (role check feito no layout)
   if (pathname.startsWith("/dashboard")) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL("/login", req.url));
-    }
-    if (userRole !== "ADMIN" && userRole !== "MANAGER") {
-      return NextResponse.redirect(new URL("/", req.url));
     }
   }
 

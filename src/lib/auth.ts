@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
+import { authConfig } from "@/lib/auth.config";
 import type { UserRole } from "@prisma/client";
 
 declare module "next-auth" {
@@ -18,22 +18,12 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(db) as ReturnType<typeof PrismaAdapter>,
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-  },
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id!;
-        // Fetch role and loyalty from DB since adapter doesn't include custom fields
         const dbUser = await db.user.findUnique({
           where: { id: user.id! },
           select: { role: true, loyaltyPoints: true },
