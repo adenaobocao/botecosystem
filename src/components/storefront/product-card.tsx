@@ -94,7 +94,7 @@ export function ProductCard({
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 pr-6">
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 pr-4">
         <div>
           <h3 className="font-semibold text-sm leading-tight truncate">
             {name}
@@ -106,25 +106,20 @@ export function ProductCard({
           )}
         </div>
 
-        <div className="flex items-center justify-between mt-2">
+        <div className="mt-2">
           <span className="text-sm font-bold text-primary">
             {formatPrice(basePrice)}
           </span>
-          {preparationTime && (
-            <span className="text-[11px] text-muted-foreground">
-              ~{preparationTime} min
-            </span>
-          )}
         </div>
       </div>
 
       {/* Quick add button */}
       <button
         onClick={handleQuickAdd}
-        className="absolute bottom-2.5 right-2.5 w-7 h-7 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-sm hover:scale-110 active:scale-90 transition-transform"
+        className="absolute bottom-2.5 right-2.5 w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-sm hover:scale-110 active:scale-90 transition-transform"
         aria-label={`Adicionar ${name} ao carrinho`}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />
         </svg>
       </button>
