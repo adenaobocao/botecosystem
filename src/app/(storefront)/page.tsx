@@ -22,16 +22,29 @@ export default async function HomePage() {
       {/* HERO — Compacto. Vende o ambiente + CTA claro.  */}
       {/* No mobile, o usuario ja ve conteudo abaixo.     */}
       {/* ─────────────────────────────────────────────── */}
-      <section className="relative h-[52vh] min-h-[320px] max-h-[480px] overflow-hidden">
+      <section className="relative h-[52vh] min-h-[320px] max-h-[480px] overflow-hidden bg-black">
+        {/* Imagem como poster instantaneo enquanto video carrega */}
         <Image
           src="/hero.jpg"
-          alt="Boteco da Estacao — noite com luzinhas e publico"
+          alt="Boteco da Estacao"
           fill
           className="object-cover"
           priority
           sizes="100vw"
-          quality={85}
+          quality={75}
         />
+        {/* Video lazy — carrega depois, substitui a imagem */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+          poster="/hero.jpg"
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
         {/* Top pills */}
