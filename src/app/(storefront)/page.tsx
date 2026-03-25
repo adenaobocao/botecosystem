@@ -86,8 +86,8 @@ export default async function HomePage() {
       {/* PROMO CARROSSEL — Top 3, cores contrastantes    */}
       {/* ─────────────────────────────────────────────── */}
       {featuredData.length > 0 && (
-        <section className="relative z-10 -mt-8 mb-2">
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-1 snap-x snap-mandatory max-w-7xl mx-auto">
+        <section className="max-w-7xl mx-auto -mt-8 relative z-10 mb-2">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-1 snap-x snap-mandatory">
             {featuredData.slice(0, 3).map((product: {
               id: string;
               name: string;
@@ -98,35 +98,39 @@ export default async function HomePage() {
               category: { name: string; slug: string };
             }, idx: number) => {
               const colors = [
-                { bg: "bg-primary/90 dark:bg-primary/80", fg: "text-white", tag: "bg-white/20 text-white", price: "text-white", label: "#1 da semana" },
-                { bg: "bg-amber-500/90 dark:bg-amber-600/80", fg: "text-white", tag: "bg-white/20 text-white", price: "text-white", label: "#2 da semana" },
-                { bg: "bg-violet-600/90 dark:bg-violet-700/80", fg: "text-white", tag: "bg-white/20 text-white", price: "text-white", label: "#3 da semana" },
+                { bg: "bg-red-50 dark:bg-red-950/20", border: "border-red-200/60 dark:border-red-800/30", tagBg: "bg-red-500/15", tagText: "text-red-700 dark:text-red-400", accent: "text-red-600 dark:text-red-400", label: "#1 da semana" },
+                { bg: "bg-amber-50 dark:bg-amber-950/20", border: "border-amber-200/60 dark:border-amber-800/30", tagBg: "bg-amber-500/15", tagText: "text-amber-700 dark:text-amber-400", accent: "text-amber-600 dark:text-amber-400", label: "#2 da semana" },
+                { bg: "bg-violet-50 dark:bg-violet-950/20", border: "border-violet-200/60 dark:border-violet-800/30", tagBg: "bg-violet-500/15", tagText: "text-violet-700 dark:text-violet-400", accent: "text-violet-600 dark:text-violet-400", label: "#3 da semana" },
               ][idx];
 
               return (
                 <Link
                   key={product.id}
                   href={`/cardapio/${product.slug}`}
-                  className={`shrink-0 w-[260px] snap-start p-3 rounded-2xl shadow-lg hover:shadow-xl transition-shadow ${colors.bg}`}
+                  className={`shrink-0 w-[85vw] max-w-[340px] snap-start p-4 rounded-2xl border shadow-lg hover:shadow-xl transition-shadow ${colors.bg} ${colors.border}`}
                 >
-                  <div className="flex gap-3">
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white/10 shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted shrink-0">
                       {product.image ? (
-                        <Image src={product.image} alt={product.name} fill className="object-cover" sizes="64px" />
+                        <Image src={product.image} alt={product.name} fill className="object-cover" sizes="80px" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xl">🍽️</div>
+                        <div className="w-full h-full flex items-center justify-center text-2xl text-muted-foreground">🍽️</div>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-between">
-                      <div>
-                        <span className={`inline-block px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase ${colors.tag}`}>
-                          {colors.label}
-                        </span>
-                        <h3 className={`mt-1 text-sm font-bold leading-tight truncate ${colors.fg}`}>{product.name}</h3>
-                      </div>
-                      <span className={`text-sm font-bold ${colors.price}`}>
+                    <div className="flex-1 min-w-0">
+                      <span className={`inline-block px-2 py-0.5 ${colors.tagBg} ${colors.tagText} text-[10px] font-bold rounded-full uppercase tracking-wide`}>
+                        {colors.label}
+                      </span>
+                      <h3 className="mt-1.5 text-base font-bold leading-tight truncate">{product.name}</h3>
+                      {product.description && (
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{product.description}</p>
+                      )}
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <span className="text-lg font-bold text-foreground">
                         {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                       </span>
+                      <p className={`text-[10px] ${colors.accent} font-medium mt-0.5`}>Ver detalhes</p>
                     </div>
                   </div>
                 </Link>
