@@ -83,38 +83,58 @@ export default async function HomePage() {
       </section>
 
       {/* ─────────────────────────────────────────────── */}
-      {/* PROMO BANNER — Visivel sem scroll no mobile.    */}
-      {/* Apelo de venda imediato.                        */}
+      {/* PROMO CARROSSEL — Top 3, cores contrastantes    */}
       {/* ─────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 -mt-8 relative z-10 mb-2">
-        <Link
-          href="/cardapio/house-burguer"
-          className="block p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30 shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <div className="flex items-center gap-4">
-            <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted shrink-0">
-              <Image
-                src="/hero.jpg"
-                alt="House Burguer"
-                fill
-                className="object-cover"
-                sizes="80px"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <span className="inline-block px-2 py-0.5 bg-amber-500/15 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-full uppercase tracking-wide">
-                Mais pedido da casa
-              </span>
-              <h3 className="mt-1.5 text-base font-bold leading-tight">House Burguer</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Costela 160g, cheddar cremoso, maionese da casa</p>
-            </div>
-            <div className="shrink-0 text-right">
-              <span className="text-lg font-bold text-foreground">R$ 46,99</span>
-              <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">Ver detalhes</p>
-            </div>
+      {featuredData.length > 0 && (
+        <section className="relative z-10 -mt-8 mb-2">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-1 snap-x snap-mandatory max-w-7xl mx-auto">
+            {featuredData.slice(0, 3).map((product: {
+              id: string;
+              name: string;
+              slug: string;
+              description: string | null;
+              image: string | null;
+              basePrice: number;
+              category: { name: string; slug: string };
+            }, idx: number) => {
+              const colors = [
+                { bg: "bg-primary/90 dark:bg-primary/80", fg: "text-white", tag: "bg-white/20 text-white", price: "text-white", label: "#1 da semana" },
+                { bg: "bg-amber-500/90 dark:bg-amber-600/80", fg: "text-white", tag: "bg-white/20 text-white", price: "text-white", label: "#2 da semana" },
+                { bg: "bg-violet-600/90 dark:bg-violet-700/80", fg: "text-white", tag: "bg-white/20 text-white", price: "text-white", label: "#3 da semana" },
+              ][idx];
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`/cardapio/${product.slug}`}
+                  className={`shrink-0 w-[260px] snap-start p-3 rounded-2xl shadow-lg hover:shadow-xl transition-shadow ${colors.bg}`}
+                >
+                  <div className="flex gap-3">
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white/10 shrink-0">
+                      {product.image ? (
+                        <Image src={product.image} alt={product.name} fill className="object-cover" sizes="64px" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xl">🍽️</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <span className={`inline-block px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase ${colors.tag}`}>
+                          {colors.label}
+                        </span>
+                        <h3 className={`mt-1 text-sm font-bold leading-tight truncate ${colors.fg}`}>{product.name}</h3>
+                      </div>
+                      <span className={`text-sm font-bold ${colors.price}`}>
+                        {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        </Link>
-      </section>
+        </section>
+      )}
 
       {/* ─────────────────────────────────────────────── */}
       {/* CATEGORIAS — Navegacao rapida                   */}
@@ -139,9 +159,9 @@ export default async function HomePage() {
       {/* DESTAQUES — O cardapio comeca a vender aqui     */}
       {/* ─────────────────────────────────────────────── */}
       {featuredData.length > 0 && (
-        <section className="max-w-7xl mx-auto py-6">
-          <div className="flex items-center justify-between mb-4 px-4">
-            <h2 className="text-lg font-bold tracking-tight">Mais pedidos da semana</h2>
+        <section className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold tracking-tight">Mais pedidos</h2>
             <Link
               href="/cardapio"
               className="text-sm font-semibold text-primary hover:underline"
@@ -149,10 +169,8 @@ export default async function HomePage() {
               Ver cardapio
             </Link>
           </div>
-
-          {/* Carrossel horizontal — top 3 com cores contrastantes */}
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-1 snap-x snap-mandatory">
-            {featuredData.slice(0, 3).map((product: {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {featuredData.map((product: {
               id: string;
               name: string;
               slug: string;
@@ -161,80 +179,20 @@ export default async function HomePage() {
               basePrice: number;
               preparationTime: number | null;
               category: { name: string; slug: string };
-            }, idx: number) => {
-              const colors = [
-                { bg: "bg-primary/8 border-primary/20", accent: "text-primary", tag: "bg-primary/10 text-primary", label: "#1 da semana" },
-                { bg: "bg-amber-500/8 border-amber-500/20", accent: "text-amber-600 dark:text-amber-400", tag: "bg-amber-500/10 text-amber-600 dark:text-amber-400", label: "#2 da semana" },
-                { bg: "bg-violet-500/8 border-violet-500/20", accent: "text-violet-600 dark:text-violet-400", tag: "bg-violet-500/10 text-violet-600 dark:text-violet-400", label: "#3 da semana" },
-              ][idx];
-
-              return (
-                <Link
-                  key={product.id}
-                  href={`/cardapio/${product.slug}`}
-                  className={`shrink-0 w-[280px] snap-start p-3 rounded-2xl border transition-all hover:shadow-md ${colors.bg}`}
-                >
-                  <div className="flex gap-3">
-                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted shrink-0">
-                      {product.image ? (
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                          sizes="80px"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl text-muted-foreground">🍽️</div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-between">
-                      <div>
-                        <span className={`inline-block px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase ${colors.tag}`}>
-                          {colors.label}
-                        </span>
-                        <h3 className="mt-1 text-sm font-bold leading-tight truncate">{product.name}</h3>
-                        {product.description && (
-                          <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">{product.description}</p>
-                        )}
-                      </div>
-                      <span className={`text-sm font-bold ${colors.accent}`}>
-                        {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+            }) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                slug={product.slug}
+                description={product.description}
+                image={product.image}
+                basePrice={product.basePrice}
+                isFeatured={true}
+                preparationTime={product.preparationTime}
+              />
+            ))}
           </div>
-
-          {/* Grid com restante dos destaques */}
-          {featuredData.length > 3 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 px-4">
-              {featuredData.slice(3).map((product: {
-                id: string;
-                name: string;
-                slug: string;
-                description: string | null;
-                image: string | null;
-                basePrice: number;
-                preparationTime: number | null;
-                category: { name: string; slug: string };
-              }) => (
-                <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  name={product.name}
-                  slug={product.slug}
-                  description={product.description}
-                  image={product.image}
-                  basePrice={product.basePrice}
-                  isFeatured={true}
-                  preparationTime={product.preparationTime}
-                />
-              ))}
-            </div>
-          )}
         </section>
       )}
 
