@@ -4,6 +4,7 @@ import { getFeaturedProducts, getCategories } from "@/lib/queries/menu";
 import { serialize } from "@/lib/utils";
 import { ProductCard } from "@/components/storefront/product-card";
 import { AgendaBanner } from "@/components/storefront/agenda-banner";
+import { ReservationWrapper } from "@/components/storefront/reservation-wrapper";
 // Hero uses video background
 
 export const dynamic = "force-dynamic";
@@ -47,19 +48,12 @@ export default async function HomePage() {
         </video>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Top pills */}
-        <div className="absolute top-4 inset-x-4 flex items-center justify-between">
+        {/* Top pill */}
+        <div className="absolute top-4 inset-x-4 flex items-center">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             <span className="text-[11px] text-white/80 font-medium">Aberto agora</span>
           </div>
-          <a
-            href="#agenda"
-            className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/30 backdrop-blur-md rounded-full border border-purple-300/15 hover:bg-purple-500/40 transition-colors"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-            <span className="text-[11px] text-white/80 font-medium">Agenda</span>
-          </a>
         </div>
 
         {/* Content — posicionado mais acima pra dar respiro pro banner */}
@@ -89,6 +83,18 @@ export default async function HomePage() {
                 className="inline-flex items-center justify-center h-11 px-5 bg-white/10 backdrop-blur-sm text-white font-medium text-sm rounded-xl border border-white/15 hover:bg-white/20 transition-colors"
               >
                 WhatsApp
+              </a>
+              <a
+                href="#agenda"
+                className="inline-flex items-center justify-center w-11 h-11 bg-white/10 backdrop-blur-sm text-white rounded-xl border border-white/15 hover:bg-purple-500/30 hover:border-purple-300/20 transition-colors"
+                title="Agenda"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                  <line x1="16" x2="16" y1="2" y2="6" />
+                  <line x1="8" x2="8" y1="2" y2="6" />
+                  <line x1="3" x2="21" y1="10" y2="10" />
+                </svg>
               </a>
             </div>
           </div>
@@ -232,6 +238,11 @@ export default async function HomePage() {
       {/* AGENDA — Compacta, complementar                 */}
       {/* ─────────────────────────────────────────────── */}
       <AgendaBanner />
+
+      {/* ─────────────────────────────────────────────── */}
+      {/* MESA ESPECIAL — Reserva discreta                */}
+      {/* ─────────────────────────────────────────────── */}
+      <ReservationWrapper />
 
       {/* ─────────────────────────────────────────────── */}
       {/* O BOTECO — Contexto rapido + social proof       */}
