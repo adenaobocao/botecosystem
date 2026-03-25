@@ -124,9 +124,9 @@ export function KitchenBoard({ orders }: { orders: Order[] }) {
                       </div>
 
                       {/* Items — big readable font */}
-                      <div className="space-y-2 mb-4">
+                      <div className="space-y-2.5 mb-4">
                         {order.items.map((item, i) => (
-                          <div key={i}>
+                          <div key={i} className="border-b border-border/50 last:border-0 pb-2 last:pb-0">
                             <div className="flex items-start gap-2">
                               <span className="text-lg font-black text-primary min-w-[2rem]">
                                 {item.quantity}x
@@ -136,9 +136,14 @@ export function KitchenBoard({ orders }: { orders: Order[] }) {
                               </span>
                             </div>
                             {item.notes && (
-                              <p className="ml-8 text-xs text-red-600 font-medium mt-0.5">
-                                {item.notes}
-                              </p>
+                              <div className="ml-8 mt-1 space-y-0.5">
+                                {item.notes.split(" | ").map((note, j) => (
+                                  <p key={j} className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                                    <span className="w-1 h-1 rounded-full bg-amber-500 shrink-0" />
+                                    {note}
+                                  </p>
+                                ))}
+                              </div>
                             )}
                           </div>
                         ))}

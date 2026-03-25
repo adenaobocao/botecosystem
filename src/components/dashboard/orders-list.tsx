@@ -203,13 +203,21 @@ export function OrdersList({
                 </p>
 
                 {/* Items */}
-                <div className="space-y-1 mb-3">
+                <div className="space-y-1.5 mb-3">
                   {order.items.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <span className="font-medium text-muted-foreground">{item.quantity}x</span>
-                      <span>{item.product.name}</span>
+                    <div key={i}>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="font-medium text-muted-foreground">{item.quantity}x</span>
+                        <span className="font-medium">{item.product.name}</span>
+                      </div>
                       {item.notes && (
-                        <span className="text-xs text-muted-foreground italic">({item.notes})</span>
+                        <div className="ml-7 flex flex-wrap gap-1 mt-0.5">
+                          {item.notes.split(" | ").map((note, j) => (
+                            <span key={j} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[10px] font-medium rounded">
+                              {note}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
                   ))}

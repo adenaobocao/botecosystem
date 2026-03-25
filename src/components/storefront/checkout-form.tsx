@@ -126,7 +126,7 @@ export function CheckoutForm({ suggestions = [], deliveryZones = [], addresses =
           variantId: item.variantId,
           quantity: item.quantity,
           price: item.price,
-          notes: item.notes,
+          notes: [item.variantName, item.notes].filter(Boolean).join(" | ") || undefined,
         })),
       });
 

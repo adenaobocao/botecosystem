@@ -67,17 +67,8 @@ export function ProductCard({
   function handleQuickAdd(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (hasOptions) {
-      // Produto tem opcoes — vai pra pagina de detalhe
-      router.push(`/cardapio/${slug}`);
-      return;
-    }
-    addItem({
-      productId: id,
-      name,
-      price: effectivePrice,
-      image,
-    });
+    // Sempre vai pra pagina de detalhe pra escolher opcoes/notas
+    router.push(`/cardapio/${slug}`);
   }
 
   return (
