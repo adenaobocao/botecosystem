@@ -14,8 +14,9 @@ interface Product {
   description: string | null;
   image: string | null;
   basePrice: number | string;
+  promoPrice?: number | string | null;
   isFeatured: boolean;
-  preparationTime: number | null;
+  preparationTime?: number | null;
 }
 
 interface Category {

@@ -11,8 +11,9 @@ interface ProductCardProps {
   description: string | null;
   image: string | null;
   basePrice: number | string;
+  promoPrice?: number | string | null;
   isFeatured?: boolean;
-  preparationTime: number | null;
+  preparationTime?: number | null;
 }
 
 function formatPrice(price: number | string): string {
@@ -47,10 +48,13 @@ export function ProductCard({
   description,
   image,
   basePrice,
+  promoPrice,
   isFeatured,
-  preparationTime,
 }: ProductCardProps) {
   const { addItem } = useCart();
+  const hasPromo = promoPrice !== null && promoPrice !== undefined;
+  const effectivePrice = hasPromo ? Number(promoPrice) : Number(basePrice);
+
   // Só mostra badge em ~40% dos produtos pra não poluir
   const hash = slug.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
   const badge = isFeatured && Math.abs(hash) % 5 < 2 ? getBadge(slug) : null;
@@ -61,7 +65,7 @@ export function ProductCard({
     addItem({
       productId: id,
       name,
-      price: Number(basePrice),
+      price: effectivePrice,
       image,
     });
   }
@@ -106,10 +110,15 @@ export function ProductCard({
           )}
         </div>
 
-        <div className="mt-2">
-          <span className="text-sm font-bold text-primary">
-            {formatPrice(basePrice)}
-          </span>
+        <div className="mt-2 flex items-center gap-2">
+          {hasPromo ? (
+            <>
+              <span className="text-sm font-bold text-primary">{formatPrice(promoPrice!)}</span>
+              <span className="text-xs text-muted-foreground line-through">{formatPrice(basePrice)}</span>
+            </>
+          ) : (
+            <span className="text-sm font-bold text-primary">{formatPrice(basePrice)}</span>
+          )}
         </div>
       </div>
 

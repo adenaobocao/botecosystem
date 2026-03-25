@@ -35,6 +35,7 @@ export async function getCategoriesWithProducts() {
           description: true,
           image: true,
           basePrice: true,
+          promoPrice: true,
           isFeatured: true,
           preparationTime: true,
         },
@@ -51,8 +52,10 @@ export async function getProduct(slug: string) {
       name: true,
       slug: true,
       description: true,
+      ingredients: true,
       image: true,
       basePrice: true,
+      promoPrice: true,
       isFeatured: true,
       preparationTime: true,
       category: {
@@ -67,6 +70,24 @@ export async function getProduct(slug: string) {
           id: true,
           name: true,
           priceModifier: true,
+        },
+      },
+      optionGroups: {
+        orderBy: { sortOrder: "asc" },
+        select: {
+          id: true,
+          name: true,
+          required: true,
+          maxChoices: true,
+          options: {
+            orderBy: { sortOrder: "asc" },
+            select: {
+              id: true,
+              name: true,
+              priceModifier: true,
+              isDefault: true,
+            },
+          },
         },
       },
     },
@@ -108,6 +129,7 @@ export async function getFeaturedProducts() {
       description: true,
       image: true,
       basePrice: true,
+      promoPrice: true,
       preparationTime: true,
       category: {
         select: {

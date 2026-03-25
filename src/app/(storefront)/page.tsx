@@ -108,6 +108,7 @@ export default async function HomePage() {
               description: string | null;
               image: string | null;
               basePrice: number;
+              promoPrice?: number | null;
               category: { name: string; slug: string };
             }, idx: number) => {
               const colors = [
@@ -140,9 +141,20 @@ export default async function HomePage() {
                       )}
                     </div>
                     <div className="shrink-0 text-right">
-                      <span className="text-lg font-bold text-foreground">
-                        {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                      </span>
+                      {product.promoPrice ? (
+                        <>
+                          <span className="text-lg font-bold text-foreground">
+                            {Number(product.promoPrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          </span>
+                          <p className="text-[10px] text-muted-foreground line-through">
+                            {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          </p>
+                        </>
+                      ) : (
+                        <span className="text-lg font-bold text-foreground">
+                          {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        </span>
+                      )}
                       <p className={`text-[10px] ${colors.accent} font-medium mt-0.5`}>Ver detalhes</p>
                     </div>
                   </div>
@@ -194,6 +206,7 @@ export default async function HomePage() {
               description: string | null;
               image: string | null;
               basePrice: number;
+              promoPrice?: number | null;
               preparationTime: number | null;
               category: { name: string; slug: string };
             }) => (
@@ -205,8 +218,8 @@ export default async function HomePage() {
                 description={product.description}
                 image={product.image}
                 basePrice={product.basePrice}
+                promoPrice={product.promoPrice}
                 isFeatured={true}
-                preparationTime={product.preparationTime}
               />
             ))}
           </div>

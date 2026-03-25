@@ -15,6 +15,7 @@ interface CheckoutData {
   type: "DELIVERY" | "PICKUP" | "TABLE";
   tableNumber?: number;
   notes?: string;
+  deliveryFee?: number;
   items: CheckoutItem[];
 }
 
@@ -46,7 +47,7 @@ export async function createOrder(data: CheckoutData) {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const deliveryFee = data.type === "DELIVERY" ? 8.0 : 0;
+  const deliveryFee = data.type === "DELIVERY" ? (data.deliveryFee ?? 8.0) : 0;
   const total = subtotal + deliveryFee;
 
   const order = await db.order.create({

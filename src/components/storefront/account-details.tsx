@@ -14,10 +14,25 @@ interface AccountDetailsProps {
   };
 }
 
+const tiers = [
+  { name: "Bronze", min: 0, next: 200, color: "from-amber-700 to-amber-600", bar: "bg-amber-600", text: "text-amber-700 dark:text-amber-400" },
+  { name: "Prata", min: 200, next: 500, color: "from-gray-400 to-gray-500", bar: "bg-gray-400", text: "text-gray-600 dark:text-gray-300" },
+  { name: "Ouro", min: 500, next: 1000, color: "from-yellow-500 to-amber-500", bar: "bg-yellow-500", text: "text-yellow-700 dark:text-yellow-400" },
+  { name: "Diamante", min: 1000, next: 2000, color: "from-cyan-400 to-blue-500", bar: "bg-cyan-500", text: "text-cyan-700 dark:text-cyan-400" },
+];
+
+function getTier(points: number) {
+  for (let i = tiers.length - 1; i >= 0; i--) {
+    if (points >= tiers[i].min) return tiers[i];
+  }
+  return tiers[0];
+}
+
 export function AccountDetails({ user }: AccountDetailsProps) {
   const initial = (user.name ?? user.email ?? "U").charAt(0).toUpperCase();
-  const nextReward = 500;
-  const progress = Math.min((user.loyaltyPoints / nextReward) * 100, 100);
+  const tier = getTier(user.loyaltyPoints);
+  const nextReward = tier.next;
+  const tierProgress = Math.min(((user.loyaltyPoints - tier.min) / (tier.next - tier.min)) * 100, 100);
 
   return (
     <div className="mt-6 space-y-4">
@@ -53,6 +68,9 @@ export function AccountDetails({ user }: AccountDetailsProps) {
           <h2 className="text-sm font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
             Fidelidade Boteco
           </h2>
+          <span className={`ml-auto px-2 py-0.5 text-[10px] font-bold uppercase rounded-md bg-gradient-to-r ${tier.color} text-white`}>
+            {tier.name}
+          </span>
         </div>
 
         <p className="text-3xl font-black tracking-tight text-amber-900 dark:text-amber-200">
@@ -60,22 +78,22 @@ export function AccountDetails({ user }: AccountDetailsProps) {
           <span className="text-base font-semibold ml-1 text-amber-700 dark:text-amber-400">pontos</span>
         </p>
 
-        {/* Progress bar to next reward */}
+        {/* Progress bar to next tier */}
         <div className="mt-3">
           <div className="flex justify-between text-[11px] font-medium text-amber-700/70 dark:text-amber-400/60 mb-1">
-            <span>Proximo premio</span>
+            <span>Proximo nivel: {tiers[tiers.indexOf(tier) + 1]?.name ?? "Max"}</span>
             <span>{user.loyaltyPoints}/{nextReward}</span>
           </div>
           <div className="h-2.5 bg-amber-200/60 dark:bg-amber-900/40 rounded-full overflow-hidden">
             <div
-              className="h-full bg-amber-500 rounded-full transition-all"
-              style={{ width: `${progress}%` }}
+              className={`h-full ${tier.bar} rounded-full transition-all`}
+              style={{ width: `${tierProgress}%` }}
             />
           </div>
           <p className="text-[11px] text-amber-700/70 dark:text-amber-400/60 mt-1.5">
             {user.loyaltyPoints >= nextReward
               ? "Voce tem um premio disponivel!"
-              : `Faltam ${nextReward - user.loyaltyPoints} pontos para ganhar um brinde`}
+              : `Faltam ${nextReward - user.loyaltyPoints} pontos para o proximo nivel`}
           </p>
         </div>
 

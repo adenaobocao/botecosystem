@@ -6,6 +6,7 @@ import { useCart } from "@/lib/cart-context";
 import { createOrder } from "@/lib/actions/checkout";
 import Link from "next/link";
 import Image from "next/image";
+import { DeliveryZonePicker } from "./delivery-zone-picker";
 
 function formatPrice(price: number): string {
   return price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -27,11 +28,20 @@ interface Suggestion {
   basePrice: number | string;
 }
 
-interface CheckoutFormProps {
-  suggestions?: Suggestion[];
+interface DeliveryZone {
+  id: string;
+  name: string;
+  fee: number | string;
+  estimatedMin: number;
+  neighborhoods: { id: string; name: string }[];
 }
 
-export function CheckoutForm({ suggestions = [] }: CheckoutFormProps) {
+interface CheckoutFormProps {
+  suggestions?: Suggestion[];
+  deliveryZones?: DeliveryZone[];
+}
+
+export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutFormProps) {
   const { items, subtotal, clearCart, addItem } = useCart();
   const router = useRouter();
   const [type, setType] = useState<OrderType>("DELIVERY");
@@ -41,8 +51,12 @@ export function CheckoutForm({ suggestions = [] }: CheckoutFormProps) {
   const [couponApplied, setCouponApplied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [deliveryFeeFromZone, setDeliveryFeeFromZone] = useState<number | null>(null);
+  const [deliveryEstimate, setDeliveryEstimate] = useState<number | null>(null);
+  const [deliveryNeighborhood, setDeliveryNeighborhood] = useState("");
 
-  const deliveryFee = type === "DELIVERY" ? 8.0 : 0;
+  const hasZones = deliveryZones.length > 0;
+  const deliveryFee = type === "DELIVERY" ? (hasZones ? (deliveryFeeFromZone ?? 0) : 8.0) : 0;
   const discount = couponApplied ? subtotal * 0.1 : 0;
   const total = subtotal + deliveryFee - discount;
 
@@ -89,6 +103,7 @@ export function CheckoutForm({ suggestions = [] }: CheckoutFormProps) {
         type,
         tableNumber: type === "TABLE" ? Number(tableNumber) || undefined : undefined,
         notes: notes || undefined,
+        deliveryFee: type === "DELIVERY" ? deliveryFee : undefined,
         items: items.map((item) => ({
           productId: item.productId,
           variantId: item.variantId,
@@ -146,6 +161,25 @@ export function CheckoutForm({ suggestions = [] }: CheckoutFormProps) {
             min={1}
             className="flex h-12 w-full rounded-xl border border-border bg-card px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
           />
+        </div>
+      )}
+
+      {/* Delivery zone picker */}
+      {type === "DELIVERY" && hasZones && (
+        <div className="mb-6">
+          <DeliveryZonePicker
+            zones={deliveryZones}
+            onSelect={(fee, est, neighborhood) => {
+              setDeliveryFeeFromZone(fee);
+              setDeliveryEstimate(est);
+              setDeliveryNeighborhood(neighborhood);
+            }}
+          />
+          {deliveryEstimate && (
+            <p className="text-[11px] text-muted-foreground mt-1.5 ml-1">
+              Tempo estimado: ~{deliveryEstimate} minutos
+            </p>
+          )}
         </div>
       )}
 
@@ -298,7 +332,7 @@ export function CheckoutForm({ suggestions = [] }: CheckoutFormProps) {
       {/* Submit */}
       <button
         onClick={handleSubmit}
-        disabled={loading || (type === "TABLE" && !tableNumber)}
+        disabled={loading || (type === "TABLE" && !tableNumber) || (type === "DELIVERY" && hasZones && deliveryFeeFromZone === null)}
         className="w-full h-13 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         {loading ? "Enviando pedido..." : `Confirmar pedido — ${formatPrice(total)}`}
