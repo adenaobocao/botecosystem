@@ -16,6 +16,7 @@ interface CheckoutData {
   tableNumber?: number;
   notes?: string;
   deliveryFee?: number;
+  addressId?: string;
   items: CheckoutItem[];
 }
 
@@ -56,6 +57,7 @@ export async function createOrder(data: CheckoutData) {
       userId,
       type: data.type,
       tableNumber: data.tableNumber || null,
+      addressId: data.addressId || null,
       status: "CONFIRMED",
       origin: "SITE",
       subtotal,

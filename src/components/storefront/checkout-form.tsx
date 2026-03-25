@@ -7,6 +7,7 @@ import { createOrder } from "@/lib/actions/checkout";
 import Link from "next/link";
 import Image from "next/image";
 import { DeliveryZonePicker } from "./delivery-zone-picker";
+import { AddressPicker } from "./address-picker";
 
 function formatPrice(price: number): string {
   return price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -36,12 +37,26 @@ interface DeliveryZone {
   neighborhoods: { id: string; name: string }[];
 }
 
+interface UserAddress {
+  id: string;
+  street: string;
+  number: string;
+  complement: string | null;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  isDefault: boolean;
+}
+
 interface CheckoutFormProps {
   suggestions?: Suggestion[];
   deliveryZones?: DeliveryZone[];
+  addresses?: UserAddress[];
+  isLoggedIn?: boolean;
 }
 
-export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutFormProps) {
+export function CheckoutForm({ suggestions = [], deliveryZones = [], addresses = [], isLoggedIn = false }: CheckoutFormProps) {
   const { items, subtotal, clearCart, addItem } = useCart();
   const router = useRouter();
   const [type, setType] = useState<OrderType>("DELIVERY");
@@ -54,6 +69,7 @@ export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutF
   const [deliveryFeeFromZone, setDeliveryFeeFromZone] = useState<number | null>(null);
   const [deliveryEstimate, setDeliveryEstimate] = useState<number | null>(null);
   const [deliveryNeighborhood, setDeliveryNeighborhood] = useState("");
+  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
 
   const hasZones = deliveryZones.length > 0;
   const deliveryFee = type === "DELIVERY" ? (hasZones ? (deliveryFeeFromZone ?? 0) : 8.0) : 0;
@@ -104,6 +120,7 @@ export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutF
         tableNumber: type === "TABLE" ? Number(tableNumber) || undefined : undefined,
         notes: notes || undefined,
         deliveryFee: type === "DELIVERY" ? deliveryFee : undefined,
+        addressId: type === "DELIVERY" && selectedAddress ? selectedAddress.id : undefined,
         items: items.map((item) => ({
           productId: item.productId,
           variantId: item.variantId,
@@ -164,8 +181,33 @@ export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutF
         </div>
       )}
 
-      {/* Delivery zone picker */}
-      {type === "DELIVERY" && hasZones && (
+      {/* Address picker */}
+      {type === "DELIVERY" && (
+        <AddressPicker
+          addresses={addresses}
+          isLoggedIn={isLoggedIn}
+          onSelect={(addr) => {
+            setSelectedAddress(addr);
+            // Auto-match neighborhood to delivery zone
+            if (addr && hasZones) {
+              const allNeighborhoods = deliveryZones.flatMap((z) =>
+                z.neighborhoods.map((n) => ({ ...n, fee: Number(z.fee), estimatedMin: z.estimatedMin }))
+              );
+              const match = allNeighborhoods.find(
+                (n) => n.name.toLowerCase() === addr.neighborhood.toLowerCase()
+              );
+              if (match) {
+                setDeliveryFeeFromZone(match.fee);
+                setDeliveryEstimate(match.estimatedMin);
+                setDeliveryNeighborhood(match.name);
+              }
+            }
+          }}
+        />
+      )}
+
+      {/* Delivery zone picker — manual if address didn't match */}
+      {type === "DELIVERY" && hasZones && !deliveryFeeFromZone && (
         <div className="mb-6">
           <DeliveryZonePicker
             zones={deliveryZones}
@@ -175,11 +217,18 @@ export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutF
               setDeliveryNeighborhood(neighborhood);
             }}
           />
-          {deliveryEstimate && (
-            <p className="text-[11px] text-muted-foreground mt-1.5 ml-1">
-              Tempo estimado: ~{deliveryEstimate} minutos
-            </p>
-          )}
+        </div>
+      )}
+
+      {/* Delivery estimate */}
+      {type === "DELIVERY" && deliveryEstimate && (
+        <div className="mb-6 flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/30 rounded-xl">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 shrink-0">
+            <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span className="text-xs text-blue-800 dark:text-blue-300">
+            Entrega em ~{deliveryEstimate}min — {deliveryNeighborhood} — {formatPrice(deliveryFee)}
+          </span>
         </div>
       )}
 
@@ -332,7 +381,7 @@ export function CheckoutForm({ suggestions = [], deliveryZones = [] }: CheckoutF
       {/* Submit */}
       <button
         onClick={handleSubmit}
-        disabled={loading || (type === "TABLE" && !tableNumber) || (type === "DELIVERY" && hasZones && deliveryFeeFromZone === null)}
+        disabled={loading || (type === "TABLE" && !tableNumber) || (type === "DELIVERY" && hasZones && deliveryFeeFromZone === null) || (type === "DELIVERY" && isLoggedIn && !selectedAddress)}
         className="w-full h-13 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         {loading ? "Enviando pedido..." : `Confirmar pedido — ${formatPrice(total)}`}
