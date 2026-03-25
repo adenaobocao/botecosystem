@@ -30,22 +30,13 @@ function generateOrderNumber(): string {
 export async function createOrder(data: CheckoutData) {
   const session = await auth();
 
-  let userId = session?.user?.id;
-  let userEmail = session?.user?.email || undefined;
-  let userName = session?.user?.name || undefined;
-
-  if (!userId) {
-    const guest = await db.user.upsert({
-      where: { email: "guest@boteco.com" },
-      update: {},
-      create: {
-        email: "guest@boteco.com",
-        name: "Cliente",
-        role: "CUSTOMER",
-      },
-    });
-    userId = guest.id;
+  if (!session?.user?.id) {
+    throw new Error("Login necessario para fazer pedido");
   }
+
+  const userId = session.user.id;
+  const userEmail = session.user.email || undefined;
+  const userName = session.user.name || undefined;
 
   const subtotal = data.items.reduce(
     (sum, item) => sum + item.price * item.quantity,

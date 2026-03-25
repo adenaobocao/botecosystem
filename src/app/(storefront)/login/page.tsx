@@ -6,7 +6,14 @@ export const metadata: Metadata = {
   title: "Entrar",
 };
 
-export default function LoginPage() {
+interface Props {
+  searchParams: Promise<{ admin?: string; callbackUrl?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const isAdmin = params.admin === "true";
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-8rem)] px-4 pb-20 md:pb-0">
       <div className="w-full max-w-sm space-y-8">
@@ -20,27 +27,31 @@ export default function LoginPage() {
           />
           <div className="text-center">
             <h1 className="text-xl font-bold tracking-tight">
-              Entre na sua conta
+              {isAdmin ? "Acesso administrativo" : "Entrar no Boteco"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Faca pedidos, acompanhe entregas e acumule pontos
+              {isAdmin
+                ? "Acesse o painel de gerenciamento"
+                : "Seu nome e telefone pra fazer pedidos e acompanhar entregas"}
             </p>
           </div>
         </div>
 
         <LoginForm />
 
-        <p className="text-center text-xs text-muted-foreground leading-relaxed">
-          Ao continuar, voce concorda com nossos{" "}
-          <a href="/termos" className="underline hover:text-foreground">
-            Termos de Uso
-          </a>{" "}
-          e{" "}
-          <a href="/privacidade" className="underline hover:text-foreground">
-            Politica de Privacidade
-          </a>
-          .
-        </p>
+        {!isAdmin && (
+          <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
+            Ao continuar, voce concorda com nossos{" "}
+            <a href="/termos" className="underline hover:text-foreground">
+              Termos de Uso
+            </a>{" "}
+            e{" "}
+            <a href="/privacidade" className="underline hover:text-foreground">
+              Politica de Privacidade
+            </a>
+            .
+          </p>
+        )}
       </div>
     </div>
   );

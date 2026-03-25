@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { CheckoutForm } from "@/components/storefront/checkout-form";
 import { getQuickSuggestions } from "@/lib/queries/menu";
 import { getDeliveryZones } from "@/lib/queries/delivery";
@@ -12,10 +13,15 @@ export const dynamic = "force-dynamic";
 export default async function CheckoutPage() {
   const session = await auth();
 
+  // Exige login pra fazer checkout
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=/checkout");
+  }
+
   const [suggestions, zones, addresses] = await Promise.all([
     getQuickSuggestions(),
     getDeliveryZones(),
-    session?.user?.id ? getUserAddresses(session.user.id) : Promise.resolve([]),
+    getUserAddresses(session.user.id),
   ]);
 
   return (
@@ -23,7 +29,7 @@ export default async function CheckoutPage() {
       suggestions={serialize(suggestions)}
       deliveryZones={serialize(zones)}
       addresses={serialize(addresses)}
-      isLoggedIn={!!session?.user?.id}
+      isLoggedIn={true}
     />
   );
 }

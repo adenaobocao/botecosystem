@@ -3,12 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useState } from "react";
+import { updateProfile } from "@/lib/actions/profile";
 
 interface AccountDetailsProps {
   user: {
     id: string;
     name?: string | null;
     email?: string | null;
+    phone?: string | null;
     image?: string | null;
     loyaltyPoints: number;
   };
@@ -28,11 +31,48 @@ function getTier(points: number) {
   return tiers[0];
 }
 
+function formatPhone(phone: string): string {
+  const d = phone.replace(/\D/g, "").replace(/^55/, "");
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return phone;
+}
+
+function formatPhoneInput(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 export function AccountDetails({ user }: AccountDetailsProps) {
-  const initial = (user.name ?? user.email ?? "U").charAt(0).toUpperCase();
+  const initial = (user.name ?? "U").charAt(0).toUpperCase();
   const tier = getTier(user.loyaltyPoints);
   const nextReward = tier.next;
   const tierProgress = Math.min(((user.loyaltyPoints - tier.min) / (tier.next - tier.min)) * 100, 100);
+
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(user.name || "");
+  const [editPhone, setEditPhone] = useState(user.phone ? formatPhone(user.phone) : "");
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    setSuccess(false);
+    try {
+      await updateProfile({
+        name: editName,
+        phone: editPhone.replace(/\D/g, ""),
+      });
+      setEditing(false);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch {
+      // silently fail
+    }
+    setSaving(false);
+  }
 
   return (
     <div className="mt-6 space-y-4">
@@ -52,14 +92,67 @@ export function AccountDetails({ user }: AccountDetailsProps) {
               {initial}
             </div>
           )}
-          <div className="min-w-0">
-            <p className="font-bold text-lg truncate">{user.name ?? "Sem nome"}</p>
-            <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+          <div className="flex-1 min-w-0">
+            {editing ? (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Seu nome"
+                  className="flex h-10 w-full rounded-lg border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary"
+                />
+                <input
+                  type="tel"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(formatPhoneInput(e.target.value))}
+                  placeholder="(42) 99999-9999"
+                  inputMode="numeric"
+                  className="flex h-10 w-full rounded-lg border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="h-8 px-4 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
+                  >
+                    {saving ? "Salvando..." : "Salvar"}
+                  </button>
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="h-8 px-4 text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="font-bold text-lg truncate">{user.name ?? "Sem nome"}</p>
+                {user.phone && (
+                  <p className="text-sm text-muted-foreground">{formatPhone(user.phone)}</p>
+                )}
+                <button
+                  onClick={() => setEditing(true)}
+                  className="text-xs text-primary font-medium mt-1 hover:underline"
+                >
+                  Editar perfil
+                </button>
+              </>
+            )}
           </div>
         </div>
+
+        {success && (
+          <div className="mt-3 p-2 bg-green-50 dark:bg-green-950/20 border border-green-200/60 rounded-lg">
+            <p className="text-xs text-green-700 dark:text-green-400 font-medium text-center">
+              Perfil atualizado!
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Loyalty card — warm, promotional */}
+      {/* Loyalty card */}
       <div className="p-5 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border border-amber-200/60 dark:border-amber-800/30 rounded-2xl">
         <div className="flex items-center gap-2 mb-3">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-amber-500">
@@ -78,7 +171,6 @@ export function AccountDetails({ user }: AccountDetailsProps) {
           <span className="text-base font-semibold ml-1 text-amber-700 dark:text-amber-400">pontos</span>
         </p>
 
-        {/* Progress bar to next tier */}
         <div className="mt-3">
           <div className="flex justify-between text-[11px] font-medium text-amber-700/70 dark:text-amber-400/60 mb-1">
             <span>Proximo nivel: {tiers[tiers.indexOf(tier) + 1]?.name ?? "Max"}</span>
