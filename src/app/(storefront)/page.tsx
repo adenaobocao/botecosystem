@@ -42,12 +42,10 @@ export default async function HomePage() {
           </div>
           <a
             href="#agenda"
-            className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/80 backdrop-blur-md rounded-full border border-purple-300/20 hover:bg-purple-500/90 transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/30 backdrop-blur-md rounded-full border border-purple-300/15 hover:bg-purple-500/40 transition-colors"
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="18" r="4" /><path d="M16 18V2" />
-            </svg>
-            <span className="text-[11px] text-white font-medium">Agenda</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+            <span className="text-[11px] text-white/80 font-medium">Agenda</span>
           </a>
         </div>
 
@@ -141,9 +139,9 @@ export default async function HomePage() {
       {/* DESTAQUES — O cardapio comeca a vender aqui     */}
       {/* ─────────────────────────────────────────────── */}
       {featuredData.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold tracking-tight">Mais pedidos</h2>
+        <section className="max-w-7xl mx-auto py-6">
+          <div className="flex items-center justify-between mb-4 px-4">
+            <h2 className="text-lg font-bold tracking-tight">Mais pedidos da semana</h2>
             <Link
               href="/cardapio"
               className="text-sm font-semibold text-primary hover:underline"
@@ -151,8 +149,10 @@ export default async function HomePage() {
               Ver cardapio
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {featuredData.map((product: {
+
+          {/* Carrossel horizontal — top 3 com cores contrastantes */}
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-1 snap-x snap-mandatory">
+            {featuredData.slice(0, 3).map((product: {
               id: string;
               name: string;
               slug: string;
@@ -161,20 +161,80 @@ export default async function HomePage() {
               basePrice: number;
               preparationTime: number | null;
               category: { name: string; slug: string };
-            }) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                slug={product.slug}
-                description={product.description}
-                image={product.image}
-                basePrice={product.basePrice}
-                isFeatured={true}
-                preparationTime={product.preparationTime}
-              />
-            ))}
+            }, idx: number) => {
+              const colors = [
+                { bg: "bg-primary/8 border-primary/20", accent: "text-primary", tag: "bg-primary/10 text-primary", label: "#1 da semana" },
+                { bg: "bg-amber-500/8 border-amber-500/20", accent: "text-amber-600 dark:text-amber-400", tag: "bg-amber-500/10 text-amber-600 dark:text-amber-400", label: "#2 da semana" },
+                { bg: "bg-violet-500/8 border-violet-500/20", accent: "text-violet-600 dark:text-violet-400", tag: "bg-violet-500/10 text-violet-600 dark:text-violet-400", label: "#3 da semana" },
+              ][idx];
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`/cardapio/${product.slug}`}
+                  className={`shrink-0 w-[280px] snap-start p-3 rounded-2xl border transition-all hover:shadow-md ${colors.bg}`}
+                >
+                  <div className="flex gap-3">
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted shrink-0">
+                      {product.image ? (
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-2xl text-muted-foreground">🍽️</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <span className={`inline-block px-1.5 py-0.5 text-[9px] font-bold rounded-full uppercase ${colors.tag}`}>
+                          {colors.label}
+                        </span>
+                        <h3 className="mt-1 text-sm font-bold leading-tight truncate">{product.name}</h3>
+                        {product.description && (
+                          <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">{product.description}</p>
+                        )}
+                      </div>
+                      <span className={`text-sm font-bold ${colors.accent}`}>
+                        {Number(product.basePrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
+
+          {/* Grid com restante dos destaques */}
+          {featuredData.length > 3 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 px-4">
+              {featuredData.slice(3).map((product: {
+                id: string;
+                name: string;
+                slug: string;
+                description: string | null;
+                image: string | null;
+                basePrice: number;
+                preparationTime: number | null;
+                category: { name: string; slug: string };
+              }) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  slug={product.slug}
+                  description={product.description}
+                  image={product.image}
+                  basePrice={product.basePrice}
+                  isFeatured={true}
+                  preparationTime={product.preparationTime}
+                />
+              ))}
+            </div>
+          )}
         </section>
       )}
 

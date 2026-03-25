@@ -51,7 +51,9 @@ export function ProductCard({
   preparationTime,
 }: ProductCardProps) {
   const { addItem } = useCart();
-  const badge = isFeatured ? getBadge(slug) : null;
+  // Só mostra badge em ~40% dos produtos pra não poluir
+  const hash = slug.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
+  const badge = isFeatured && Math.abs(hash) % 5 < 2 ? getBadge(slug) : null;
 
   function handleQuickAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -92,7 +94,7 @@ export function ProductCard({
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 pr-8">
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 pr-6">
         <div>
           <h3 className="font-semibold text-sm leading-tight truncate">
             {name}
@@ -119,10 +121,10 @@ export function ProductCard({
       {/* Quick add button */}
       <button
         onClick={handleQuickAdd}
-        className="absolute bottom-3 right-3 w-9 h-9 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-md hover:scale-110 active:scale-90 transition-transform"
+        className="absolute bottom-2.5 right-2.5 w-7 h-7 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-sm hover:scale-110 active:scale-90 transition-transform"
         aria-label={`Adicionar ${name} ao carrinho`}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />
         </svg>
       </button>
