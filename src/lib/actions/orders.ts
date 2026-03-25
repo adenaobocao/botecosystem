@@ -10,10 +10,20 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
     throw new Error("Nao autorizado");
   }
 
-  await db.order.update({
+  const order = await db.order.update({
     where: { id: orderId },
     data: { status: newStatus as any },
   });
+
+  // Notifica cliente via WhatsApp se o pedido veio de la
+  if (order.origin === "WHATSAPP") {
+    try {
+      const { notifyOrderStatus } = await import("@/lib/whatsapp/conversation");
+      await notifyOrderStatus(orderId, newStatus);
+    } catch (err) {
+      console.error("[orders] WhatsApp notification error:", err);
+    }
+  }
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/pedidos");
