@@ -4,7 +4,7 @@ import { getFeaturedProducts, getCategories } from "@/lib/queries/menu";
 import { serialize } from "@/lib/utils";
 import { ProductCard } from "@/components/storefront/product-card";
 import { AgendaBanner } from "@/components/storefront/agenda-banner";
-import { HeroSlideshow } from "@/components/storefront/hero-slideshow";
+// Hero uses video background
 
 export const dynamic = "force-dynamic";
 
@@ -24,18 +24,27 @@ export default async function HomePage() {
       {/* No mobile, o usuario ja ve conteudo abaixo.     */}
       {/* ─────────────────────────────────────────────── */}
       <section className="relative h-[52vh] min-h-[320px] max-h-[480px] overflow-hidden bg-black">
-        {/* Primeira imagem priority pra LCP rapido */}
+        {/* Poster instantaneo enquanto video carrega */}
         <Image
-          src="/hero-1.png"
+          src="/hero.jpg"
           alt="Boteco da Estacao"
           fill
           className="object-cover"
           priority
           sizes="100vw"
-          quality={80}
+          quality={75}
         />
-        {/* Slideshow crossfade sobre a imagem estática */}
-        <HeroSlideshow />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+          poster="/hero.jpg"
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
         {/* Top pills */}
