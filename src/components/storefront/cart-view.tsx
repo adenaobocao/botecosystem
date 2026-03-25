@@ -13,21 +13,34 @@ export function CartView() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-20 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-            <circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" />
-            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-          </svg>
+      <div className="max-w-lg mx-auto px-4 py-16 text-center">
+        {/* Ilustracao carrinho vazio */}
+        <div className="w-28 h-28 mx-auto mb-6 relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-primary/40">
+              <circle cx="8" cy="21" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="19" cy="21" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          {/* Detalhes decorativos */}
+          <div className="absolute top-2 right-4 w-2 h-2 bg-accent/30 rounded-full" />
+          <div className="absolute bottom-4 left-3 w-1.5 h-1.5 bg-primary/20 rounded-full" />
         </div>
-        <h1 className="text-lg font-bold">Carrinho vazio</h1>
-        <p className="text-sm text-muted-foreground mt-1">Adicione itens do cardapio</p>
+        <h1 className="text-xl font-bold">Seu carrinho esta vazio</h1>
+        <p className="text-sm text-muted-foreground mt-2 max-w-[250px] mx-auto">
+          Que tal dar uma olhada no nosso cardapio? Tem hamburguer, porcao, drinks...
+        </p>
         <Link
           href="/cardapio"
-          className="inline-flex items-center justify-center h-11 px-6 mt-6 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+          className="inline-flex items-center justify-center h-12 px-8 mt-6 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity shadow-sm"
         >
           Ver cardapio
         </Link>
+        <p className="text-[11px] text-muted-foreground mt-3">
+          Entrega e retirada disponiveis
+        </p>
       </div>
     );
   }

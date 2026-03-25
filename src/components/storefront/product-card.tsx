@@ -25,22 +25,8 @@ function formatPrice(price: number | string): string {
   });
 }
 
-// Badges criativas — distribuidas por slug pra variar
-const badgeVariants = [
-  { text: "Mais vendido", bg: "bg-amber-500", fg: "text-white" },
-  { text: "Promo", bg: "bg-green-500", fg: "text-white" },
-  { text: "-18%", bg: "bg-red-500", fg: "text-white" },
-  { text: "Novidade", bg: "bg-violet-500", fg: "text-white" },
-  { text: "Top 3", bg: "bg-blue-500", fg: "text-white" },
-  { text: "Imperdivel", bg: "bg-pink-500", fg: "text-white" },
-];
-
-function getBadge(slug: string) {
-  let hash = 0;
-  for (let i = 0; i < slug.length; i++) {
-    hash = ((hash << 5) - hash + slug.charCodeAt(i)) | 0;
-  }
-  return badgeVariants[Math.abs(hash) % badgeVariants.length];
+function getDiscountPercent(base: number, promo: number): number {
+  return Math.round(((base - promo) / base) * 100);
 }
 
 export function ProductCard({
@@ -59,10 +45,7 @@ export function ProductCard({
   const hasPromo = promoPrice !== null && promoPrice !== undefined;
   const effectivePrice = hasPromo ? Number(promoPrice) : Number(basePrice);
   const hasOptions = (_count?.optionGroups ?? 0) > 0 || (_count?.variants ?? 0) > 0;
-
-  // Só mostra badge em ~40% dos produtos pra não poluir
-  const hash = slug.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
-  const badge = isFeatured && Math.abs(hash) % 5 < 2 ? getBadge(slug) : null;
+  const discount = hasPromo ? getDiscountPercent(Number(basePrice), Number(promoPrice)) : 0;
 
   function handleQuickAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -91,9 +74,9 @@ export function ProductCard({
             🍽️
           </div>
         )}
-        {badge && (
-          <span className={`absolute top-1 left-1 px-1.5 py-0.5 ${badge.bg} ${badge.fg} text-[10px] font-bold rounded-md uppercase tracking-wide`}>
-            {badge.text}
+        {hasPromo && discount > 0 && (
+          <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-md">
+            -{discount}%
           </span>
         )}
       </div>

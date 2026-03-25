@@ -39,18 +39,27 @@ export default async function MeusPedidosPage() {
       <h1 className="text-xl font-bold tracking-tight mb-6">Meus pedidos</h1>
 
       {orders.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-              <path d="M16 3h5v5" /><path d="M8 3H3v5" />
-              <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3" /><path d="m15 9 6-6" />
-            </svg>
+        <div className="text-center py-12">
+          {/* Ilustracao pedidos */}
+          <div className="w-28 h-28 mx-auto mb-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" className="text-primary/40">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M9 12h6M9 16h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div className="absolute top-3 right-3 w-2 h-2 bg-accent/30 rounded-full" />
+            <div className="absolute bottom-5 left-4 w-1.5 h-1.5 bg-primary/20 rounded-full" />
           </div>
-          <p className="text-sm font-semibold">Nenhum pedido ainda</p>
-          <p className="text-xs text-muted-foreground mt-1">Seus pedidos aparecerão aqui</p>
+          <h2 className="text-lg font-bold">Nenhum pedido ainda</h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-[260px] mx-auto">
+            Quando voce fizer seu primeiro pedido, ele vai aparecer aqui com acompanhamento em tempo real.
+          </p>
           <Link
             href="/cardapio"
-            className="inline-flex items-center justify-center h-11 px-6 mt-6 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+            className="inline-flex items-center justify-center h-12 px-8 mt-6 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity shadow-sm"
           >
             Fazer primeiro pedido
           </Link>
