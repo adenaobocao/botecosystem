@@ -17,6 +17,7 @@ interface Product {
   promoPrice?: number | string | null;
   isFeatured: boolean;
   preparationTime?: number | null;
+  _count?: { optionGroups: number; variants: number };
 }
 
 interface Category {

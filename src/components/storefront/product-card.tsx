@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 
 interface ProductCardProps {
@@ -14,6 +15,7 @@ interface ProductCardProps {
   promoPrice?: number | string | null;
   isFeatured?: boolean;
   preparationTime?: number | null;
+  _count?: { optionGroups: number; variants: number };
 }
 
 function formatPrice(price: number | string): string {
@@ -50,10 +52,13 @@ export function ProductCard({
   basePrice,
   promoPrice,
   isFeatured,
+  _count,
 }: ProductCardProps) {
   const { addItem } = useCart();
+  const router = useRouter();
   const hasPromo = promoPrice !== null && promoPrice !== undefined;
   const effectivePrice = hasPromo ? Number(promoPrice) : Number(basePrice);
+  const hasOptions = (_count?.optionGroups ?? 0) > 0 || (_count?.variants ?? 0) > 0;
 
   // Só mostra badge em ~40% dos produtos pra não poluir
   const hash = slug.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
@@ -62,6 +67,11 @@ export function ProductCard({
   function handleQuickAdd(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    if (hasOptions) {
+      // Produto tem opcoes — vai pra pagina de detalhe
+      router.push(`/cardapio/${slug}`);
+      return;
+    }
     addItem({
       productId: id,
       name,

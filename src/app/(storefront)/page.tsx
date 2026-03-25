@@ -208,6 +208,7 @@ export default async function HomePage() {
               basePrice: number;
               promoPrice?: number | null;
               preparationTime: number | null;
+              _count?: { optionGroups: number; variants: number };
               category: { name: string; slug: string };
             }) => (
               <ProductCard
@@ -220,6 +221,7 @@ export default async function HomePage() {
                 basePrice={product.basePrice}
                 promoPrice={product.promoPrice}
                 isFeatured={true}
+                _count={product._count}
               />
             ))}
           </div>

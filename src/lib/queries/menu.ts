@@ -38,6 +38,7 @@ export async function getCategoriesWithProducts() {
           promoPrice: true,
           isFeatured: true,
           preparationTime: true,
+          _count: { select: { optionGroups: true, variants: true } },
         },
       },
     },
@@ -131,6 +132,7 @@ export async function getFeaturedProducts() {
       basePrice: true,
       promoPrice: true,
       preparationTime: true,
+      _count: { select: { optionGroups: true, variants: true } },
       category: {
         select: {
           name: true,
