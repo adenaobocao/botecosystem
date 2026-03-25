@@ -40,6 +40,18 @@ const navItems = [
       </svg>
     ),
   },
+  {
+    label: "Inteligencia",
+    href: "/dashboard/inteligencia",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93" />
+        <path d="M8.24 9.93A4 4 0 0 1 8 6a4 4 0 0 1 4-4" />
+        <path d="M10.5 13.5A8 8 0 0 0 4 21h16a8 8 0 0 0-6.5-7.5" />
+        <path d="M15 21v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+      </svg>
+    ),
+  },
 ];
 
 export function DashboardSidebar() {
