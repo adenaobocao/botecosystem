@@ -28,6 +28,7 @@ interface Props {
   templateName?: string;
   templateSegment?: string;
   templateOccasion?: string;
+  imageUrl?: string; // from criativo editor
 }
 
 const segmentLabels: Record<string, string> = {
@@ -54,7 +55,7 @@ const tones = [
   { value: "informativo", label: "Informativo" },
 ];
 
-export function CampaignForm({ segmentCounts, products, events, template, templateName, templateSegment, templateOccasion }: Props) {
+export function CampaignForm({ segmentCounts, products, events, template, templateName, templateSegment, templateOccasion, imageUrl: initialImageUrl }: Props) {
   const router = useRouter();
   const [step, setStep] = useState(template ? 2 : 1);
   const [name, setName] = useState(templateName || "");
@@ -69,6 +70,7 @@ export function CampaignForm({ segmentCounts, products, events, template, templa
   const [occasion, setOccasion] = useState(templateOccasion || "");
   const [tone, setTone] = useState("casual");
   const [showProducts, setShowProducts] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl || null);
 
   const segmentCount =
     segment === "ALL"
@@ -138,6 +140,7 @@ export function CampaignForm({ segmentCounts, products, events, template, templa
       targetSegment: segment,
       messageTemplate: message,
       scheduledAt: scheduleType === "later" ? scheduledAt : undefined,
+      imageUrl: imageUrl || undefined,
     });
 
     if (scheduleType === "now" && result.id) {
@@ -383,6 +386,9 @@ export function CampaignForm({ segmentCounts, products, events, template, templa
           <div className="bg-[#ECE5DD] rounded-2xl p-4 min-h-[200px] flex flex-col justify-end">
             <div className="max-w-[85%] ml-auto">
               <div className="bg-[#DCF8C6] rounded-xl rounded-tr-sm p-3 shadow-sm">
+                {imageUrl && (
+                  <img src={imageUrl} alt="Arte" className="w-full rounded-lg mb-2" />
+                )}
                 <p className="text-xs leading-relaxed whitespace-pre-line text-[#111]">
                   {previewMessage || "..."}
                 </p>
@@ -431,6 +437,12 @@ export function CampaignForm({ segmentCounts, products, events, template, templa
               <span className="text-muted-foreground">Personalizacao</span>
               <span className="font-medium">{message.includes("{nome}") ? "Sim ({nome})" : "Nao"}</span>
             </div>
+            {imageUrl && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Arte visual</span>
+                <span className="font-medium text-green-600">Anexada</span>
+              </div>
+            )}
             {selectedProducts.length > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Produtos</span>

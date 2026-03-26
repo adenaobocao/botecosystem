@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CampaignVisualEditor } from "./campaign-visual-editor";
 import Link from "next/link";
 
@@ -16,10 +17,34 @@ interface Props {
 }
 
 export function CriativoClient({ products }: Props) {
+  const router = useRouter();
   const [exportedImages, setExportedImages] = useState<string[]>([]);
+  const [lastDataUrl, setLastDataUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   function handleExport(dataUrl: string) {
     setExportedImages((prev) => [dataUrl, ...prev]);
+    setLastDataUrl(dataUrl);
+  }
+
+  async function handleUseCampaign() {
+    if (!lastDataUrl) return;
+    setUploading(true);
+    try {
+      // Upload imagem e pega URL publica
+      const res = await fetch("/api/upload/campaign-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: lastDataUrl }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        router.push(`/dashboard/marketing/campanhas/nova?imageUrl=${encodeURIComponent(data.url)}&name=Campanha+com+arte`);
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
+    setUploading(false);
   }
 
   return (
@@ -37,6 +62,17 @@ export function CriativoClient({ products }: Props) {
       </div>
 
       <CampaignVisualEditor onExport={handleExport} products={products} />
+
+      {/* Use in campaign button */}
+      {lastDataUrl && (
+        <button
+          onClick={handleUseCampaign}
+          disabled={uploading}
+          className="w-full h-11 text-xs font-semibold border-2 border-primary text-primary rounded-lg hover:bg-primary/5 disabled:opacity-50 transition-colors"
+        >
+          {uploading ? "Preparando imagem..." : "Usar em campanha WhatsApp"}
+        </button>
+      )}
 
       {exportedImages.length > 0 && (
         <div>

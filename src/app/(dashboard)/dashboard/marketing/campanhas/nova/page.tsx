@@ -25,7 +25,7 @@ async function getProductsForCampaign() {
 export default async function NovaCampanhaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ template?: string; segment?: string; occasion?: string; name?: string }>;
+  searchParams: Promise<{ template?: string; segment?: string; occasion?: string; name?: string; imageUrl?: string }>;
 }) {
   const params = await searchParams;
   const [segmentCounts, products, events] = await Promise.all([
@@ -67,6 +67,7 @@ export default async function NovaCampanhaPage({
         templateName={params.name}
         templateSegment={params.segment}
         templateOccasion={params.occasion}
+        imageUrl={params.imageUrl}
       />
     </div>
   );
