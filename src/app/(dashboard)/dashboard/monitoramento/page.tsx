@@ -22,9 +22,13 @@ export default async function MonitoramentoPage() {
   [...bares, ...restaurantes].forEach((c) => allMap.set(c.placeId, c));
   const competitors = Array.from(allMap.values());
 
+  // Busca rating real do Boteco no Google
+  const botecoDetail = await getCompetitorDetail("ChIJIwpGLVsa6JQRCc4qML-9cs4");
+  const botecoRating = botecoDetail?.rating || 4.7;
+
   // Build heatmap e analise
   const zones = buildHeatmapData(competitors);
-  const analysis = buildCompetitiveAnalysis(competitors);
+  const analysis = buildCompetitiveAnalysis(competitors, botecoRating);
 
   // Busca reviews negativos dos top 5 concorrentes (mais avaliados)
   const topByReviews = [...competitors]

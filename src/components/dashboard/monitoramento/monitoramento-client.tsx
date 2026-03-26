@@ -7,6 +7,7 @@ import { CompetitorDetail } from "./competitor-detail";
 import { CompetitiveScore } from "./competitive-score";
 import { NegativeReviews } from "./negative-reviews";
 import { MarketInsights } from "./market-insights";
+import { OurReviews } from "./our-reviews";
 
 interface Competitor {
   placeId: string;
@@ -107,6 +108,12 @@ export function MonitoramentoClient({ competitors, zones, analysis, negativeRevi
           <h2 className="text-sm font-semibold mb-3">Score competitivo</h2>
           <CompetitiveScore analysis={analysis} />
         </div>
+      </div>
+
+      {/* Our reviews */}
+      <div className="bg-card border border-border rounded-xl p-4">
+        <h2 className="text-sm font-semibold mb-3">Nossas avaliacoes -- Boteco da Estacao</h2>
+        <OurReviews />
       </div>
 
       {/* Ranking + Detail panel */}

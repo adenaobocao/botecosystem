@@ -19,27 +19,32 @@ function getRatingColor(rating: number) {
   return "text-red-600";
 }
 
+const BOTECO_PLACE_ID = "ChIJIwpGLVsa6JQRCc4qML-9cs4";
+
 export function CompetitorRanking({ competitors, botecoRating, onSelect }: Props) {
   const sorted = [...competitors].sort((a, b) => b.rating - a.rating || b.totalReviews - a.totalReviews);
 
   return (
     <div className="space-y-1.5">
       {/* Boteco position */}
-      <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between">
+      <button
+        onClick={() => onSelect(BOTECO_PLACE_ID)}
+        className="w-full p-3 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between hover:bg-primary/15 transition-colors text-left"
+      >
         <div className="flex items-center gap-2.5">
           <span className="w-6 h-6 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full">
             {sorted.filter((c) => c.rating > botecoRating).length + 1}
           </span>
           <div>
             <p className="text-xs font-bold">Boteco da Estacao</p>
-            <p className="text-[10px] text-muted-foreground">Voce</p>
+            <p className="text-[10px] text-muted-foreground">Voce -- clique pra ver avaliacoes</p>
           </div>
         </div>
         <div className="text-right">
           <p className={`text-sm font-bold ${getRatingColor(botecoRating)}`}>{botecoRating}</p>
           <p className="text-[9px] text-muted-foreground">Google Maps</p>
         </div>
-      </div>
+      </button>
 
       {/* Competitors */}
       {sorted.map((c, i) => (
