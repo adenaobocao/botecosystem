@@ -62,9 +62,12 @@ export async function sendCampaignNow(campaignId: string) {
   );
   if (!campaign) return;
 
-  // Busca mensagens pendentes
-  const messages = await db.$queryRawUnsafe<{ id: string; phone: string }[]>(
-    `SELECT id, phone FROM "CampaignMessage" WHERE "campaignId" = $1 AND status = 'PENDING'`,
+  // Busca mensagens pendentes com nome do cliente pra personalizacao
+  const messages = await db.$queryRawUnsafe<{ id: string; phone: string; name: string | null }[]>(
+    `SELECT cm.id, cm.phone, u.name
+     FROM "CampaignMessage" cm
+     LEFT JOIN "User" u ON u.id = cm."userId"
+     WHERE cm."campaignId" = $1 AND cm.status = 'PENDING'`,
     campaignId
   );
 
@@ -72,7 +75,12 @@ export async function sendCampaignNow(campaignId: string) {
 
   for (const msg of messages) {
     try {
-      await sendText(msg.phone, campaign.message_template);
+      // Substitui {nome} pelo nome real do cliente
+      const personalizedMsg = campaign.message_template.replace(
+        /\{nome\}/gi,
+        msg.name || "cliente"
+      );
+      await sendText(msg.phone, personalizedMsg);
       await db.$executeRawUnsafe(
         `UPDATE "CampaignMessage" SET status = 'SENT', "sentAt" = NOW() WHERE id = $1`,
         msg.id

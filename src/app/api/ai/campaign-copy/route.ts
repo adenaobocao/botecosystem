@@ -4,13 +4,23 @@ import { buildCampaignPrompt } from "@/lib/ai/prompts";
 
 export async function POST(req: Request) {
   try {
-    const { segment, segmentDescription, products, occasion, tone } = await req.json();
+    const { segment, segmentDescription, products, occasion, tone, event } = await req.json();
+
+    // Se tem evento, enriquece a ocasiao
+    let fullOccasion = occasion || "";
+    if (event) {
+      fullOccasion += ` Evento: ${event.title}`;
+      if (event.artist) fullOccasion += ` com ${event.artist}`;
+      fullOccasion += ` em ${event.date}`;
+      if (event.coverCharge > 0) fullOccasion += ` (entrada R$${event.coverCharge})`;
+      else fullOccasion += ` (entrada franca)`;
+    }
 
     const prompt = buildCampaignPrompt({
       segment,
       segmentDescription: segmentDescription || segment,
       products,
-      occasion,
+      occasion: fullOccasion || undefined,
       tone,
     });
 

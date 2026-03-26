@@ -134,6 +134,42 @@ export async function getCouponSuggestions(status: string = "PENDING") {
   return rows;
 }
 
+// Performance: clientes que pediram depois de receber campanha (7 dias)
+export async function getCampaignPerformance() {
+  const rows = await db.$queryRawUnsafe<
+    {
+      campaign_id: string;
+      campaign_name: string;
+      sent_at: string | null;
+      total_targets: number;
+      total_delivered: number;
+      orders_after: number;
+      revenue_after: number;
+    }[]
+  >(
+    `SELECT
+       c.id as campaign_id,
+       c.name as campaign_name,
+       c."sentAt"::text as sent_at,
+       c."totalTargets" as total_targets,
+       c."totalDelivered" as total_delivered,
+       COUNT(DISTINCT o.id)::int as orders_after,
+       COALESCE(SUM(o.total), 0)::float as revenue_after
+     FROM "Campaign" c
+     LEFT JOIN "CampaignMessage" cm ON cm."campaignId" = c.id AND cm.status = 'SENT'
+     LEFT JOIN "Order" o ON o."userId" = cm."userId"
+       AND o."createdAt" > c."sentAt"
+       AND o."createdAt" < c."sentAt" + INTERVAL '7 days'
+       AND o."deletedAt" IS NULL
+       AND o.status != 'CANCELLED'
+     WHERE c.status = 'SENT' AND c."sentAt" IS NOT NULL
+     GROUP BY c.id, c.name, c."sentAt", c."totalTargets", c."totalDelivered"
+     ORDER BY c."sentAt" DESC
+     LIMIT 10`
+  );
+  return rows;
+}
+
 // Insights recentes
 export async function getRecentInsights(limit: number = 10) {
   const rows = await db.$queryRawUnsafe<
