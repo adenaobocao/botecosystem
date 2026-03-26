@@ -83,6 +83,16 @@ const navItems = [
       </svg>
     ),
   },
+  {
+    label: "Marketing",
+    href: "/dashboard/marketing",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m3 11 18-5v12L3 13v-2z" />
+        <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+      </svg>
+    ),
+  },
 ];
 
 export function DashboardSidebar() {
