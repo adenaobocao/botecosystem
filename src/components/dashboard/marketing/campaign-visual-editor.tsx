@@ -65,13 +65,15 @@ const TEMPLATES: TemplateConfig[] = [
 interface Props {
   onExport: (dataUrl: string) => void;
   products: Product[];
+  initialTitle?: string;
+  initialSubtitle?: string;
 }
 
-export function CampaignVisualEditor({ onExport, products }: Props) {
+export function CampaignVisualEditor({ onExport, products, initialTitle, initialSubtitle }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState<TemplateConfig>(TEMPLATES[0]);
-  const [title, setTitle] = useState("PROMO ESPECIAL");
-  const [subtitle, setSubtitle] = useState("So hoje no Boteco da Estacao");
+  const [title, setTitle] = useState(initialTitle || "PROMO ESPECIAL");
+  const [subtitle, setSubtitle] = useState(initialSubtitle || "So hoje no Boteco da Estacao");
   const [badge, setBadge] = useState("50% OFF");
   const [detail, setDetail] = useState("Valido para consumo no local");
   const [bgPhoto, setBgPhoto] = useState<string | null>(null);

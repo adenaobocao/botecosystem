@@ -107,7 +107,6 @@ export default async function MarketingPage() {
           { label: "Campanhas", href: "/dashboard/marketing/campanhas", icon: "M22 12h-4l-3 9L9 3l-3 9H2" },
           { label: "Cupons IA", href: "/dashboard/marketing/cupons", icon: "M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" },
           { label: "Criativo", href: "/dashboard/marketing/criativo", icon: "M3 3h18v18H3zM9 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" },
-          { label: "Conteudo", href: "/dashboard/marketing/conteudo", icon: "M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" },
         ].map((action) => (
           <Link
             key={action.href}
