@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { PWARegister } from "@/components/pwa-register";
 import { Providers } from "@/components/providers";
+import { PushPrompt } from "@/components/storefront/push-prompt";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -66,6 +67,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <PWARegister />
+          <PushPrompt />
         </Providers>
       </body>
     </html>
