@@ -59,6 +59,12 @@ export default async function InteligenciaPage({
         </div>
         <div className="flex items-center gap-3">
           <Link
+            href="/dashboard/inteligencia/roadmap"
+            className="px-3 py-1.5 text-xs font-medium rounded-lg border border-violet-300 text-violet-600 hover:bg-violet-50 transition-colors"
+          >
+            SOON -- Roadmap
+          </Link>
+          <Link
             href="/dashboard/inteligencia/alertas"
             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border hover:bg-muted transition-colors"
           >
