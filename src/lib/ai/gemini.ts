@@ -1,16 +1,15 @@
-// Servico Gemini compartilhado -- usado por insights, campanhas, conteudo
+// Servico IA compartilhado (Groq) -- usado por insights, campanhas, conteudo
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
 
-// Rate limiter simples: 15 RPM (free tier)
+// Rate limiter simples: 30 RPM (Groq free tier)
 const calls: number[] = [];
-const MAX_RPM = 15;
+const MAX_RPM = 30;
 
 async function waitForSlot(): Promise<void> {
   const now = Date.now();
-  // Remove calls older than 60s
   while (calls.length > 0 && now - calls[0] > 60_000) {
     calls.shift();
   }
@@ -22,33 +21,35 @@ async function waitForSlot(): Promise<void> {
   calls.push(Date.now());
 }
 
+const SYSTEM_PROMPT =
+  "Voce e o analista de negocios do Boteco da Estacao, um bar/restaurante em Ponta Grossa-PR. " +
+  "Sempre responda em portugues brasileiro, de forma direta e acionavel. " +
+  "Use dados concretos quando fornecidos. Nao use emojis.";
+
 export async function askGemini(
   prompt: string,
   opts?: { maxTokens?: number; temperature?: number }
 ): Promise<string> {
-  if (!process.env.GEMINI_API_KEY) {
-    return "[IA indisponivel — GEMINI_API_KEY nao configurada]";
+  if (!process.env.GROQ_API_KEY) {
+    return "[IA indisponivel — GROQ_API_KEY nao configurada]";
   }
 
   await waitForSlot();
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
-      generationConfig: {
-        maxOutputTokens: opts?.maxTokens ?? 1024,
-        temperature: opts?.temperature ?? 0.7,
-      },
-      systemInstruction:
-        "Voce e o analista de negocios do Boteco da Estacao, um bar/restaurante em Ponta Grossa-PR. " +
-        "Sempre responda em portugues brasileiro, de forma direta e acionavel. " +
-        "Use dados concretos quando fornecidos. Nao use emojis.",
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: opts?.maxTokens ?? 1024,
+      temperature: opts?.temperature ?? 0.7,
     });
 
-    const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    return completion.choices[0]?.message?.content?.trim() || "[Resposta vazia da IA]";
   } catch (error) {
-    console.error("[gemini] Error:", error);
+    console.error("[groq] Error:", error);
     return "[Erro ao gerar resposta da IA]";
   }
 }
