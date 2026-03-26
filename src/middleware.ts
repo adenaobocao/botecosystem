@@ -8,12 +8,12 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
 
-  // Dashboard — requer auth (role check feito no layout)
-  if (pathname.startsWith("/dashboard")) {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-  }
+  // TODO: reativar auth da dashboard
+  // if (pathname.startsWith("/dashboard")) {
+  //   if (!isLoggedIn) {
+  //     return NextResponse.redirect(new URL("/login", req.url));
+  //   }
+  // }
 
   // Minha conta — requer autenticacao
   if (pathname.startsWith("/minha-conta")) {
