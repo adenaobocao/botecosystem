@@ -6,6 +6,7 @@ import { CompetitorRanking } from "./competitor-ranking";
 import { CompetitorDetail } from "./competitor-detail";
 import { CompetitiveScore } from "./competitive-score";
 import { NegativeReviews } from "./negative-reviews";
+import { MarketInsights } from "./market-insights";
 
 interface Competitor {
   placeId: string;
@@ -140,6 +141,24 @@ export function MonitoramentoClient({ competitors, zones, analysis, negativeRevi
             </div>
           )}
         </div>
+      </div>
+
+      {/* AI Insights */}
+      <div className="bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-950/10 dark:to-indigo-950/10 border border-violet-200/40 dark:border-violet-800/20 rounded-xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-600">
+            <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93" />
+            <path d="M8.24 9.93A4 4 0 0 1 8 6a4 4 0 0 1 4-4" />
+            <path d="M10.5 13.5A8 8 0 0 0 4 21h16a8 8 0 0 0-6.5-7.5" />
+            <path d="M15 21v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+          </svg>
+          <h2 className="text-sm font-semibold">Insights da IA -- Plano de acao</h2>
+        </div>
+        <MarketInsights
+          analysisData={analysis}
+          negativeReviews={negativeReviews}
+          topCompetitors={competitors.sort((a, b) => b.totalReviews - a.totalReviews).slice(0, 5)}
+        />
       </div>
 
       {/* Negative reviews */}
