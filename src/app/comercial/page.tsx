@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "BotecoSystem — Sistema de Pedidos para Bares e Restaurantes",
   description:
-    "Sistema completo de pedidos online. Sem comissao por pedido. Cardapio digital, KDS, fidelidade, marketing com IA.",
+    "WebApp completo de pedidos online com IA. Sem comissão, sem instalar nada. Cardápio digital, fidelidade, marketing inteligente.",
   robots: { index: true, follow: true },
 };
 
@@ -47,15 +47,26 @@ function FeatureCard({
   icon,
   title,
   desc,
+  highlight,
 }: {
   icon: string;
   title: string;
   desc: string;
+  highlight?: boolean;
 }) {
   return (
-    <div className="p-5 rounded-2xl border border-neutral-200 bg-white">
+    <div
+      className={`p-5 rounded-2xl border bg-white ${highlight ? "border-red-200 ring-1 ring-red-100" : "border-neutral-200"}`}
+    >
       <div className="text-2xl mb-3">{icon}</div>
-      <h3 className="font-bold text-sm mb-1">{title}</h3>
+      <h3 className="font-bold text-sm mb-1">
+        {title}
+        {highlight && (
+          <span className="ml-2 text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full uppercase">
+            IA
+          </span>
+        )}
+      </h3>
       <p className="text-xs text-neutral-500 leading-relaxed">{desc}</p>
     </div>
   );
@@ -106,23 +117,28 @@ export default function ComercialPage() {
         <div className="max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-6">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            Sistema proprio, zero comissao
+            WebApp com IA integrada &middot; Zero comissão
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-6">
             Seu bar merece mais do que{" "}
-            <span className="text-red-600">30% de comissao</span>
+            <span className="text-red-600">30% de comissão</span>
           </h1>
-          <p className="text-base sm:text-lg text-neutral-500 max-w-2xl mx-auto mb-10">
-            Sistema completo de pedidos online com a cara do seu negocio.
-            Cardapio digital, pagamento, cozinha, fidelidade e marketing — tudo
-            sem pagar comissao por pedido.
+          <p className="text-base sm:text-lg text-neutral-500 max-w-2xl mx-auto mb-4">
+            Um app completo que funciona direto no navegador — seu cliente não
+            precisa instalar nada. Mas recebe notificações, acumula pontos,
+            ganha recompensas e pede com um toque.
+          </p>
+          <p className="text-sm text-neutral-400 max-w-xl mx-auto mb-10">
+            Inteligência Artificial cuida do marketing, cria textos, analisa
+            vendas e gera insights pro seu negócio. Você foca no que importa:
+            atender bem.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="#planos"
               className="h-12 px-8 text-base font-bold bg-red-600 text-white rounded-full inline-flex items-center justify-center hover:bg-red-700 transition-colors"
             >
-              Quero pra meu negocio
+              Quero pra meu negócio
             </a>
             <a
               href="https://adenaobocao-boteco-da-estacao-1c8n.vercel.app/"
@@ -133,35 +149,99 @@ export default function ComercialPage() {
               Ver demo ao vivo
             </a>
           </div>
+
+          {/* Badges */}
+          <div className="flex flex-wrap justify-center gap-3 mt-10">
+            {[
+              "WebApp (sem instalar)",
+              "Push Notifications",
+              "IA integrada",
+              "Fidelidade e recompensas",
+            ].map((badge) => (
+              <span
+                key={badge}
+                className="px-3 py-1 text-xs font-semibold rounded-full bg-neutral-100 text-neutral-600"
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* WebApp destaque */}
+      <Section className="bg-gradient-to-b from-neutral-900 to-neutral-800 text-white">
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-xs font-bold mb-4">
+            Tecnologia de ponta
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold">
+            Um app sem precisar de <span className="text-red-400">App Store</span>
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-neutral-400 max-w-2xl mx-auto">
+            O BotecoSystem é um WebApp (PWA) — funciona como aplicativo no
+            celular do cliente, mas sem baixar nada. Abre pelo link, salva na
+            tela inicial, e pronto.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            {
+              icon: "📲",
+              t: "Instala em 1 toque",
+              d: "O cliente acessa o link e salva na tela inicial. Sem App Store, sem Play Store, sem fricção.",
+            },
+            {
+              icon: "🔔",
+              t: "Notificações reais",
+              d: "Push notifications direto no celular — igual app nativo. Avise sobre promoções, status do pedido, novidades.",
+            },
+            {
+              icon: "⚡",
+              t: "Rápido como app",
+              d: "Carrega instantâneo, funciona offline parcial, e ocupa zero espaço no celular do cliente.",
+            },
+          ].map((item) => (
+            <div
+              key={item.t}
+              className="p-5 rounded-2xl bg-white/5 border border-white/10"
+            >
+              <div className="text-2xl mb-3">{item.icon}</div>
+              <h3 className="font-bold text-sm mb-1">{item.t}</h3>
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                {item.d}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* Problema */}
       <Section className="bg-neutral-900 text-white">
-        <SectionTitle sub="O que voce perde hoje sem perceber">
-          <span className="text-red-400">O problema</span> que ninguem fala
+        <SectionTitle sub="O que você perde hoje sem perceber">
+          <span className="text-red-400">O problema</span> que ninguém fala
         </SectionTitle>
         <div className="grid sm:grid-cols-2 gap-4">
           {[
             {
               n: "27%",
-              t: "Comissao do iFood",
-              d: "A cada R$ 100 em vendas, R$ 27 vao pro iFood. Em R$ 15 mil/mes, sao R$ 4.050 embora.",
+              t: "Comissão do iFood",
+              d: "A cada R$ 100 em vendas, R$ 27 vão pro iFood. Em R$ 15 mil/mês, são R$ 4.050 embora.",
             },
             {
               n: "0",
               t: "Dados dos seus clientes",
-              d: "No iFood, o cliente e do iFood. Voce nao tem nome, telefone, historico. Nao pode falar com ele.",
+              d: "No iFood, o cliente é do iFood. Você não tem nome, telefone, histórico. Não pode falar com ele.",
             },
             {
               n: "5 min",
               t: "Push do concorrente",
-              d: "O cliente pede de voce e 5 minutos depois recebe notificacao do concorrente. O iFood faz isso.",
+              d: "O cliente pede de você e 5 minutos depois recebe notificação do concorrente. O iFood faz isso.",
             },
             {
               n: "30+",
               t: "Minutos perdidos por dia",
-              d: "Respondendo WhatsApp, confirmando endereco, corrigindo pedido. Tempo que podia estar produzindo.",
+              d: "Respondendo WhatsApp, confirmando endereço, corrigindo pedido. Tempo que podia estar produzindo.",
             },
           ].map((item) => (
             <div
@@ -180,87 +260,241 @@ export default function ComercialPage() {
         </div>
       </Section>
 
+      {/* IA Section */}
+      <Section className="bg-gradient-to-b from-violet-50 to-white">
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-100 text-violet-700 text-xs font-bold mb-4">
+            Inteligência Artificial
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold">
+            IA que trabalha <span className="text-violet-600">por você</span>
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-neutral-500 max-w-2xl mx-auto">
+            Não é só automação. A IA do BotecoSystem pensa, analisa e age.
+            Ela entende seu negócio e faz o que um analista de marketing +
+            gerente de dados faria — mas 24 horas por dia.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {[
+            {
+              icon: "✍️",
+              t: "Cria textos de campanhas",
+              d: "A IA escreve os textos das suas push notifications e campanhas de marketing. Textos criativos, com a voz do seu bar, prontos pra disparar.",
+            },
+            {
+              icon: "📊",
+              t: "Analisa suas vendas",
+              d: "Identifica o que vende mais, horários de pico, ticket médio, produtos em queda. Gera insights que você não teria tempo de descobrir sozinho.",
+            },
+            {
+              icon: "🔍",
+              t: "Monitora a concorrência",
+              d: "Acompanha avaliações e posicionamento dos concorrentes na região. Você sabe como está posicionado sem precisar pesquisar.",
+            },
+            {
+              icon: "🎯",
+              t: "Sugere cupons inteligentes",
+              d: "Baseado no histórico dos clientes, a IA sugere qual desconto dar, pra quem, e quando. Reativa cliente inativo automaticamente.",
+            },
+            {
+              icon: "🔔",
+              t: "Dispara push com texto por IA",
+              d: "Cria notificações com tom descontraído, memético ou promocional — você escolhe o estilo e a IA gera 6 opções na hora.",
+            },
+            {
+              icon: "🚨",
+              t: "Alertas automáticos",
+              d: "Se algo muda no padrão (queda de vendas, pico inesperado, avaliação ruim), a IA te avisa antes que vire problema.",
+            },
+          ].map((item) => (
+            <div
+              key={item.t}
+              className="p-5 rounded-2xl border border-violet-200 bg-white"
+            >
+              <div className="text-2xl mb-3">{item.icon}</div>
+              <h3 className="font-bold text-sm mb-1 flex items-center gap-2">
+                {item.t}
+                <span className="text-[10px] font-bold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded-full">
+                  IA
+                </span>
+              </h3>
+              <p className="text-xs text-neutral-500 leading-relaxed">
+                {item.d}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Gamificação e Fidelidade */}
+      <Section className="bg-amber-50">
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold mb-4">
+            Gamificação
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold">
+            Cliente que <span className="text-amber-600">joga, volta</span>
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-neutral-500 max-w-2xl mx-auto">
+            Sistema de fidelidade com gamificação integrada. Seu cliente acumula
+            pontos, sobe de nível e ganha recompensas. Quanto mais pede, mais
+            ganha.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              level: "Bronze",
+              color: "bg-amber-700",
+              desc: "Começou a pedir",
+              perk: "Acumula pontos a cada pedido",
+            },
+            {
+              level: "Prata",
+              color: "bg-neutral-400",
+              desc: "Cliente frequente",
+              perk: "Cupons exclusivos + frete grátis",
+            },
+            {
+              level: "Ouro",
+              color: "bg-yellow-500",
+              desc: "Fã do bar",
+              perk: "Descontos maiores + prioridade",
+            },
+            {
+              level: "Diamante",
+              color: "bg-sky-400",
+              desc: "VIP da casa",
+              perk: "Recompensas especiais + surpresas",
+            },
+          ].map((tier) => (
+            <div
+              key={tier.level}
+              className="p-5 rounded-2xl border border-amber-200 bg-white text-center"
+            >
+              <div
+                className={`w-10 h-10 rounded-full ${tier.color} mx-auto mb-3`}
+              />
+              <h3 className="font-extrabold text-sm">{tier.level}</h3>
+              <p className="text-xs text-neutral-400 mt-1">{tier.desc}</p>
+              <p className="text-xs font-medium text-amber-700 mt-2">
+                {tier.perk}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 p-5 rounded-2xl bg-white border border-amber-200">
+          <p className="text-sm text-neutral-600 leading-relaxed">
+            <strong>Por que funciona:</strong> O cliente sabe que está perto do
+            próximo nível e pede de novo pra chegar lá. É o mesmo princípio dos
+            programas de milhas, mas pro seu bar. A IA identifica quem está
+            próximo de subir de nível e envia push automático incentivando.
+          </p>
+        </div>
+      </Section>
+
       {/* Features cliente */}
       <Section className="bg-white">
-        <SectionTitle sub="O que seu cliente vai ver e usar">
-          Site do seu negocio
+        <SectionTitle sub="O que seu cliente vê e usa no WebApp">
+          App do seu negócio
         </SectionTitle>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <FeatureCard
             icon="🍔"
-            title="Cardapio digital completo"
-            desc="Fotos, descricoes, opcoes (ponto da carne, molho, tamanho), precos promocionais."
+            title="Cardápio digital completo"
+            desc="Fotos, descrições, opções (ponto da carne, molho, tamanho), preços promocionais e combos."
           />
           <FeatureCard
             icon="📱"
             title="Pedido online fluido"
-            desc="Delivery, retirada ou mesa. Checkout rapido com PIX, cartao ou dinheiro."
+            desc="Delivery, retirada ou mesa. Checkout rápido com PIX, cartão ou dinheiro na entrega."
           />
           <FeatureCard
             icon="📍"
             title="Rastreio em tempo real"
-            desc="Cliente acompanha: confirmado, preparando, pronto, saiu pra entrega."
+            desc="Cliente acompanha o status: confirmado, preparando, pronto, saiu pra entrega."
           />
           <FeatureCard
             icon="⭐"
-            title="Programa de fidelidade"
-            desc="Pontos por pedido, niveis Bronze a Diamante. Cliente volta mais."
+            title="Fidelidade e recompensas"
+            desc="Pontos por pedido, níveis Bronze a Diamante, cupons exclusivos. Cliente volta mais."
           />
           <FeatureCard
             icon="📅"
             title="Agenda e reservas"
-            desc="Eventos, shows, reserva de mesa especial. Tudo pelo site."
+            desc="Eventos, shows, reserva de mesa especial. Tudo pelo app, sem ligar."
           />
           <FeatureCard
-            icon="📲"
-            title="Instala como app"
-            desc="PWA: o cliente instala no celular sem App Store. Abre direto da tela inicial."
+            icon="🔔"
+            title="Push igual app nativo"
+            desc="Notificações no celular do cliente — promoções, status do pedido, novidades. Sem precisar instalar nada."
           />
         </div>
       </Section>
 
       {/* Features admin */}
       <Section>
-        <SectionTitle sub="Tudo que voce precisa pra gerenciar num so lugar">
+        <SectionTitle sub="Painel completo com IA que trabalha por você">
           Painel do dono
         </SectionTitle>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <FeatureCard
             icon="📊"
             title="Dashboard com KPIs"
-            desc="Vendas do dia, ticket medio, pedidos por origem. Visao completa do negocio."
+            desc="Vendas do dia, ticket médio, pedidos por origem. Visão completa do negócio em tempo real."
           />
           <FeatureCard
             icon="🍳"
             title="Tela da Cozinha (KDS)"
-            desc="Kanban visual: Novos > Preparando > Prontos. Funciona em qualquer celular."
+            desc="Kanban visual: Novos → Preparando → Prontos. Funciona em qualquer celular ou tablet."
           />
           <FeatureCard
             icon="🖨️"
-            title="Impressao termica"
-            desc="Botao de imprimir direto no pedido. Impressora 80mm USB comum."
+            title="Impressão térmica"
+            desc="Botão de imprimir direto no pedido. Qualquer impressora 80mm USB — a partir de R$ 150."
           />
           <FeatureCard
             icon="📣"
-            title="Marketing inteligente"
-            desc="Push pro celular do cliente, cupons, campanhas automaticas."
+            title="Disparador de push com IA"
+            desc="A IA cria 6 opções de texto por campanha. Escolha o tom (promocional, memético, sério) e dispare em um clique."
+            highlight
           />
           <FeatureCard
             icon="🤖"
-            title="Analytics com IA"
-            desc="Insights sobre vendas, horario de pico, produtos em queda. IA analisa pra voce."
+            title="Analytics inteligente"
+            desc="IA analisa vendas, horário de pico, produtos em queda e gera insights automaticamente. Sem você precisar fazer nada."
+            highlight
+          />
+          <FeatureCard
+            icon="🎨"
+            title="Editor de campanhas"
+            desc="Crie artes para promoções com logo, fotos dos produtos e textos gerados por IA. Sem precisar de designer."
+            highlight
           />
           <FeatureCard
             icon="🗺️"
             title="Zonas de entrega"
-            desc="Configure bairros e taxas. Cada regiao com seu preco de delivery."
+            desc="Configure bairros e taxas de delivery. Cada região com seu preço. Estilo iFood."
+          />
+          <FeatureCard
+            icon="🔍"
+            title="Monitoramento de mercado"
+            desc="Acompanhe avaliações dos concorrentes, nota no Google e posicionamento. IA gera relatórios comparativos."
+            highlight
+          />
+          <FeatureCard
+            icon="🎯"
+            title="Cupons inteligentes"
+            desc="IA sugere cupons personalizados: qual desconto, pra quem, quando. Reativa clientes inativos automaticamente."
+            highlight
           />
         </div>
       </Section>
 
-      {/* Comparacao */}
+      {/* Comparação */}
       <Section className="bg-white">
-        <SectionTitle sub="Nao e pra trocar o iFood — e pra lucrar mais">
+        <SectionTitle sub="Não é pra trocar o iFood — é pra lucrar mais">
           BotecoSystem vs iFood
         </SectionTitle>
         <div className="overflow-x-auto">
@@ -280,7 +514,7 @@ export default function ComercialPage() {
             </thead>
             <tbody>
               <CompareRow
-                label="Comissao por pedido"
+                label="Comissão por pedido"
                 ifood="12-30%"
                 sistema="0%"
               />
@@ -292,42 +526,47 @@ export default function ComercialPage() {
               <CompareRow
                 label="Push notification"
                 ifood="Manda do concorrente"
-                sistema="So voce manda"
+                sistema="Só você manda"
               />
               <CompareRow
-                label="Fidelidade / pontos"
-                ifood="Nao tem"
-                sistema="Integrado"
+                label="Fidelidade / gamificação"
+                ifood="Não tem"
+                sistema="4 níveis + recompensas"
               />
               <CompareRow
-                label="Cardapio personalizado"
+                label="Cardápio personalizado"
                 ifood="Limitado"
-                sistema="Total"
+                sistema="Total (opções, combos, promos)"
               />
               <CompareRow
                 label="Identidade visual"
-                ifood="Pagina generica"
-                sistema="Sua marca"
+                ifood="Página genérica"
+                sistema="Sua marca, seu domínio"
               />
               <CompareRow
                 label="KDS cozinha"
-                ifood="Basico"
-                sistema="Kanban + impressao"
+                ifood="Básico"
+                sistema="Kanban + impressão térmica"
               />
               <CompareRow
-                label="Marketing direto"
-                ifood="Nao"
-                sistema="Campanhas + IA"
+                label="Marketing com IA"
+                ifood="Não"
+                sistema="Textos, campanhas, insights"
+              />
+              <CompareRow
+                label="Instalar app"
+                ifood="Precisa baixar iFood"
+                sistema="WebApp — sem instalar nada"
               />
             </tbody>
           </table>
         </div>
         <div className="mt-8 p-5 rounded-2xl bg-emerald-50 border border-emerald-200">
           <p className="text-sm font-semibold text-emerald-800">
-            O iFood continua captando cliente novo. Mas todo cliente que ja te
-            conhece, manda pro SEU sistema. Sem comissao, com fidelidade, com
-            marketing direto. Em 6 meses, 30-40% dos seus pedidos podem vir
-            direto.
+            O iFood continua captando cliente novo. Mas todo cliente que já te
+            conhece, manda pro SEU sistema. Sem comissão, com fidelidade, com
+            marketing direto por IA. Em 6 meses, 30-40% dos seus pedidos podem
+            vir direto — e esse dinheiro é todo seu.
           </p>
         </div>
       </Section>
@@ -335,27 +574,27 @@ export default function ComercialPage() {
       {/* Economia */}
       <Section className="bg-neutral-900 text-white">
         <SectionTitle>
-          Quanto voce <span className="text-emerald-400">economiza</span>
+          Quanto você <span className="text-emerald-400">economiza</span>
         </SectionTitle>
         <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
           <p className="text-sm text-neutral-400">
-            Exemplo: bar que faz R$ 15.000/mes pelo iFood
+            Exemplo: bar que faz R$ 15.000/mês pelo iFood
           </p>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm">Comissao iFood (27%)</span>
+              <span className="text-sm">Comissão iFood (27%)</span>
               <span className="text-lg font-bold text-red-400">
-                -R$ 4.050/mes
+                -R$ 4.050/mês
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm">Se 30% migrar pro sistema</span>
               <span className="text-lg font-bold text-emerald-400">
-                +R$ 1.215/mes
+                +R$ 1.215/mês
               </span>
             </div>
             <div className="flex justify-between items-center border-t border-white/10 pt-3">
-              <span className="text-sm font-bold">Economia liquida/mes</span>
+              <span className="text-sm font-bold">Economia líquida/mês</span>
               <span className="text-2xl font-black text-emerald-400">
                 ~R$ 1.100
               </span>
@@ -369,7 +608,7 @@ export default function ComercialPage() {
 
       {/* Planos */}
       <Section className="bg-white" id="planos">
-        <SectionTitle sub="Escolha o que faz sentido pro seu negocio">
+        <SectionTitle sub="Escolha o que faz sentido pro seu negócio">
           Planos
         </SectionTitle>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -387,11 +626,12 @@ export default function ComercialPage() {
             </div>
             <ul className="space-y-2.5 text-sm flex-1 mb-6">
               {[
-                "Site com cardapio digital",
+                "WebApp com a cara do seu negócio",
+                "Cardápio digital completo",
                 "Pedidos online (delivery + retirada + mesa)",
-                "Checkout com pagamento",
-                "KDS cozinha (tela + impressao)",
-                "1 ano de dominio incluso",
+                "Checkout com pagamento (PIX, cartão)",
+                "KDS cozinha (tela + impressão térmica)",
+                "1 ano de domínio incluso",
                 "1 ano de servidor incluso",
               ].map((f) => (
                 <li key={f} className="flex items-start gap-2">
@@ -404,7 +644,7 @@ export default function ComercialPage() {
             </ul>
             <div className="pt-4 border-t border-neutral-100">
               <p className="text-xs text-neutral-400">
-                Renovacao: R$ 300/ano (dominio + servidor + correcoes)
+                Renovação: R$ 300/ano (domínio + servidor + correções)
               </p>
             </div>
           </div>
@@ -416,7 +656,7 @@ export default function ComercialPage() {
             </div>
             <h3 className="text-lg font-extrabold mb-1">Completo</h3>
             <p className="text-xs text-neutral-500 mb-6">
-              Pra competir de verdade com o iFood
+              Tudo do Essencial + IA + fidelidade
             </p>
             <div className="mb-6">
               <span className="text-3xl font-black">R$ 2.400</span>
@@ -427,12 +667,14 @@ export default function ComercialPage() {
             <ul className="space-y-2.5 text-sm flex-1 mb-6">
               {[
                 "Tudo do Essencial",
-                "Push notifications pro cliente",
-                "Programa de fidelidade",
-                "Monitoramento de mercado",
-                "Analytics com IA",
-                "Editor de campanhas",
-                "2h/mes de ajustes inclusos",
+                "Push notifications (igual app nativo)",
+                "Fidelidade com gamificação (4 níveis)",
+                "Disparador de push com textos por IA",
+                "Analytics e insights por IA",
+                "Monitoramento de concorrentes",
+                "Editor de campanhas com IA",
+                "Cupons inteligentes automáticos",
+                "2h/mês de ajustes inclusos",
               ].map((f) => (
                 <li key={f} className="flex items-start gap-2">
                   <span className="text-red-500 font-bold mt-0.5">
@@ -444,7 +686,7 @@ export default function ComercialPage() {
             </ul>
             <div className="pt-4 border-t border-neutral-100">
               <p className="text-xs text-neutral-400">
-                Renovacao: R$ 500/ano
+                Renovação: R$ 500/ano
               </p>
             </div>
           </div>
@@ -453,19 +695,19 @@ export default function ComercialPage() {
           <div className="p-6 rounded-2xl border-2 border-neutral-200 bg-white flex flex-col sm:col-span-2 lg:col-span-1">
             <h3 className="text-lg font-extrabold mb-1">Plus</h3>
             <p className="text-xs text-neutral-500 mb-6">
-              Desenvolvimento continuo sob demanda
+              Desenvolvimento contínuo sob demanda
             </p>
             <div className="mb-6">
               <span className="text-3xl font-black">R$ 200</span>
-              <span className="text-sm text-neutral-400 ml-1">/mes</span>
+              <span className="text-sm text-neutral-400 ml-1">/mês</span>
             </div>
             <ul className="space-y-2.5 text-sm flex-1 mb-6">
               {[
-                "Ate 8h/mes de desenvolvimento",
+                "Até 8h/mês de desenvolvimento",
                 "Features novas sob demanda",
-                "Integracoes customizadas",
+                "Integrações customizadas",
                 "Prioridade no suporte",
-                "Seu negocio sempre evoluindo",
+                "Seu negócio sempre evoluindo",
               ].map((f) => (
                 <li key={f} className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold mt-0.5">
@@ -493,28 +735,28 @@ export default function ComercialPage() {
           {[
             {
               n: "1",
-              t: "Reuniao inicial (30 min)",
-              d: "Entendemos seu negocio, cardapio e operacao.",
+              t: "Reunião inicial (30 min)",
+              d: "Entendemos seu negócio, cardápio e operação.",
             },
             {
               n: "2",
-              t: "Setup (3-5 dias uteis)",
-              d: "Configuramos o sistema com sua marca, cardapio e opcoes.",
+              t: "Setup (3-5 dias úteis)",
+              d: "Configuramos o WebApp com sua marca, cardápio, opções e zonas de entrega.",
             },
             {
               n: "3",
               t: "Treinamento (1h)",
-              d: "Ensinamos voce e sua equipe a usar o painel e a cozinha.",
+              d: "Ensinamos você e sua equipe a usar o painel, a cozinha e o marketing.",
             },
             {
               n: "4",
               t: "Go-live",
-              d: "Sistema no ar, com seu dominio, pronto pra receber pedidos.",
+              d: "Sistema no ar, com seu domínio, pronto pra receber pedidos.",
             },
             {
               n: "5",
               t: "Acompanhamento (30 dias)",
-              d: "Suporte prioritario no primeiro mes.",
+              d: "Suporte prioritário no primeiro mês. A IA já começa a gerar insights.",
             },
           ].map((step) => (
             <div key={step.n} className="flex gap-4 items-start">
@@ -537,27 +779,35 @@ export default function ComercialPage() {
           {[
             {
               q: "Preciso largar o iFood?",
-              a: "Nao. O iFood continua captando cliente novo. O sistema e pra cliente que ja te conhece pedir direto — sem comissao.",
+              a: "Não. O iFood continua captando cliente novo. O sistema é pra cliente que já te conhece pedir direto — sem comissão.",
             },
             {
-              q: "Funciona no celular?",
-              a: "Sim. O site e otimizado pra celular e pode ser instalado como app (PWA). Nao precisa de App Store.",
+              q: "O cliente precisa baixar algum app?",
+              a: "Não. É um WebApp — funciona direto no navegador. O cliente pode salvar na tela inicial do celular como atalho, mas não precisa baixar nada. Mesmo assim, recebe push notifications normalmente.",
+            },
+            {
+              q: "A IA faz o quê exatamente?",
+              a: "Ela cria textos para campanhas e push notifications, analisa suas vendas e gera insights, monitora concorrentes, sugere cupons personalizados e envia alertas automáticos. Tudo sem você precisar fazer nada.",
+            },
+            {
+              q: "Como funciona a fidelidade?",
+              a: "O cliente acumula pontos a cada pedido e sobe de nível (Bronze, Prata, Ouro, Diamante). Cada nível desbloqueia recompensas maiores. A IA identifica quem está perto de subir e manda push incentivando.",
             },
             {
               q: "Preciso de impressora especial?",
-              a: "Nao obrigatorio. O KDS funciona em qualquer celular/tablet. Se quiser imprimir, qualquer termica USB 80mm funciona (a partir de R$ 150).",
+              a: "Não é obrigatório. O KDS funciona em qualquer celular ou tablet. Se quiser imprimir, qualquer térmica USB 80mm funciona (a partir de R$ 150).",
             },
             {
               q: "E a nota fiscal?",
-              a: "O sistema nao emite NF. Se voce ja usa Bling, Stone ou outro PDV, continua usando pra parte fiscal. O BotecoSystem cuida do pedido online.",
+              a: "O sistema não emite NF. Se você já usa Bling, Stone ou outro PDV, continua usando pra parte fiscal. O BotecoSystem cuida do pedido online.",
             },
             {
-              q: "Posso mudar o cardapio depois?",
-              a: "Sim. No Plano Completo voce tem 2h/mes de ajustes. No Essencial, alteracoes maiores sao cobradas a parte. No Plus, sob demanda.",
+              q: "Posso mudar o cardápio depois?",
+              a: "Sim. No Plano Completo você tem 2h/mês de ajustes. No Essencial, alterações maiores são cobradas à parte. No Plus, sob demanda.",
             },
             {
               q: "Meus dados ficam seguros?",
-              a: "Servidor profissional com backup automatico, HTTPS e dados criptografados. Infraestrutura de nivel empresarial.",
+              a: "Servidor profissional com backup automático, HTTPS e dados criptografados. Infraestrutura de nível empresarial.",
             },
           ].map((faq) => (
             <details
@@ -582,11 +832,11 @@ export default function ComercialPage() {
       <section className="py-20 sm:py-28 px-4 text-center bg-red-600 text-white">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-4xl font-extrabold mb-4">
-            Pronto pra ter seu proprio sistema?
+            Pronto pra ter seu próprio sistema?
           </h2>
           <p className="text-base sm:text-lg text-red-100 mb-8">
-            Em 5 dias seu negocio pode estar recebendo pedidos diretos, sem
-            comissao, com a sua marca.
+            Em 5 dias seu negócio pode estar recebendo pedidos diretos, sem
+            comissão, com IA trabalhando por você.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
@@ -612,11 +862,11 @@ export default function ComercialPage() {
       {/* Footer */}
       <footer className="py-8 px-4 text-center bg-neutral-900 text-neutral-500 text-xs">
         <p>
-          BotecoSystem &mdash; Sistema de pedidos para bares e restaurantes.
+          BotecoSystem &mdash; WebApp inteligente para bares e restaurantes.
         </p>
         <p className="mt-1">
           <Link href="/prospector" className="underline hover:text-neutral-300">
-            Area do prospector
+            Área do prospector
           </Link>
         </p>
       </footer>
