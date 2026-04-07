@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { updateOrderStatus } from "@/lib/actions/orders";
+import { PrintButton } from "./order-ticket";
 
 const columns = [
   { status: "CONFIRMED", label: "Novos", color: "border-blue-500", bg: "bg-blue-50 dark:bg-blue-950/30", next: "PREPARING", nextLabel: "Preparar" },
@@ -46,7 +47,7 @@ export function KitchenBoard({ orders }: { orders: Order[] }) {
   }
 
   return (
-    <div className="h-dvh flex flex-col bg-background">
+    <div className="min-h-dvh md:h-dvh flex flex-col bg-background">
       {/* KDS Header */}
       <div className="shrink-0 flex items-center justify-between px-4 sm:px-6 h-14 border-b border-border bg-card">
         <div className="flex items-center gap-3">
@@ -69,7 +70,7 @@ export function KitchenBoard({ orders }: { orders: Order[] }) {
       </div>
 
       {/* Kanban columns */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-0 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-0 overflow-y-auto md:overflow-hidden">
         {columns.map((col) => {
           const colOrders = orders.filter((o) => o.status === col.status);
           return (
@@ -149,15 +150,18 @@ export function KitchenBoard({ orders }: { orders: Order[] }) {
                         ))}
                       </div>
 
-                      {/* Action */}
-                      {col.next && (
-                        <button
-                          onClick={() => handleAdvance(order.id, col.next!)}
-                          className="w-full h-10 text-sm font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                        >
-                          {col.nextLabel}
-                        </button>
-                      )}
+                      {/* Actions */}
+                      <div className="flex gap-2">
+                        <PrintButton order={order} size="sm" />
+                        {col.next && (
+                          <button
+                            onClick={() => handleAdvance(order.id, col.next!)}
+                            className="flex-1 h-10 text-sm font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                          >
+                            {col.nextLabel}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}

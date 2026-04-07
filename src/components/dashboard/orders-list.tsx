@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { updateOrderStatus } from "@/lib/actions/orders";
+import { PrintButton } from "./order-ticket";
 
 const statusOptions = [
   { value: "ALL", label: "Todos" },
@@ -233,6 +234,7 @@ export function OrdersList({
                 <div className="flex items-center justify-between pt-3 border-t border-border">
                   <span className="text-lg font-bold">{formatBRL(order.total)}</span>
                   <div className="flex gap-2">
+                    <PrintButton order={order} size="sm" />
                     {order.status !== "CANCELLED" && order.status !== "DELIVERED" && (
                       <button
                         onClick={() => handleAdvance(order.id, "CANCELLED")}
