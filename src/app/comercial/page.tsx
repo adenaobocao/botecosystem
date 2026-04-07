@@ -695,19 +695,21 @@ export default function ComercialPage() {
           <div className="p-6 rounded-2xl border-2 border-neutral-200 bg-white flex flex-col sm:col-span-2 lg:col-span-1">
             <h3 className="text-lg font-extrabold mb-1">Plus</h3>
             <p className="text-xs text-neutral-500 mb-6">
-              Desenvolvimento contínuo sob demanda
+              Desenvolvimento exclusivo pro seu negócio
             </p>
             <div className="mb-6">
-              <span className="text-3xl font-black">R$ 200</span>
+              <span className="text-3xl font-black">R$ 2.000</span>
               <span className="text-sm text-neutral-400 ml-1">/mês</span>
             </div>
             <ul className="space-y-2.5 text-sm flex-1 mb-6">
               {[
-                "Até 8h/mês de desenvolvimento",
-                "Features novas sob demanda",
-                "Integrações customizadas",
-                "Prioridade no suporte",
-                "Seu negócio sempre evoluindo",
+                "Desenvolvedor dedicado ao seu projeto",
+                "Features exclusivas sob demanda",
+                "Integrações customizadas (ERP, fiscal, delivery)",
+                "Novas páginas, fluxos e automações",
+                "Prioridade total no suporte",
+                "Reunião mensal de alinhamento",
+                "Seu sistema evolui todo mês",
               ].map((f) => (
                 <li key={f} className="flex items-start gap-2">
                   <span className="text-amber-500 font-bold mt-0.5">
@@ -719,7 +721,7 @@ export default function ComercialPage() {
             </ul>
             <div className="pt-4 border-t border-neutral-100">
               <p className="text-xs text-neutral-400">
-                Add-on: contrate junto com qualquer plano
+                Add-on: contrate junto com qualquer plano. Ideal pra quem quer um sistema que cresce junto com o negócio.
               </p>
             </div>
           </div>
@@ -840,7 +842,7 @@ export default function ComercialPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="https://wa.me/55SEUNUMERO?text=Oi%2C%20quero%20saber%20mais%20sobre%20o%20BotecoSystem"
+              href="https://wa.me/5542984399135?text=Oi%2C%20quero%20saber%20mais%20sobre%20o%20BotecoSystem"
               target="_blank"
               rel="noopener noreferrer"
               className="h-12 px-8 text-base font-bold bg-white text-red-600 rounded-full inline-flex items-center justify-center hover:bg-red-50 transition-colors"
